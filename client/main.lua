@@ -15,9 +15,13 @@ function Xperience:Init(data)
 
     self:InitialiseUI()
 
-    self.Ready = true
+    RegisterCommand('+xperience', function()
+        if self.Initialised then
+            self:ToggleUI()
+        end
 
-    RegisterCommand('+xperience', function() self:OpenUI() end)
+        print(self.Initialised, self.UIOpen)
+    end)
     RegisterCommand('-xperience', function() end)
     RegisterKeyMapping('+xperience', 'Show Rank Bar', 'keyboard', 'z')
 end
@@ -47,11 +51,23 @@ function Xperience:OnRankChange(data, cb)
     cb('ok')
 end
 
+function Xperience:OnUIInitialised(data, cb)
+    self.Initialised = true
+    self.UIOpen = false
+
+    cb('ok')
+end
+
 function Xperience:OnSave(data, cb)
     self:SetData(data.xp)
 
     TriggerServerEvent('xperience:server:save', self.CurrentXP, self.CurrentRank)
 
+    cb('ok')
+end
+
+function Xperience:OnUIClosed(data, cb)
+    self.UIOpen = false
     cb('ok')
 end
 
@@ -74,9 +90,22 @@ function Xperience:InitialiseUI()
 end
 
 function Xperience:OpenUI()
-    SendNUIMessage({ xperience_display = true })
+    self.UIOpen = true
+    SendNUIMessage({ xperience_show = true })
 end
 
+function Xperience:CloseUI()
+    self.UIOpen = false
+    SendNUIMessage({ xperience_hide = true })
+end
+
+function Xperience:ToggleUI()
+    if self.UIOpen then
+        self:CloseUI()
+    else
+        self:OpenUI()
+    end
+end
 
 ----------------------------------------------------
 --                    SETTERS                     --
@@ -285,6 +314,8 @@ RegisterNetEvent('xperience:client:setRank')
 AddEventHandler('xperience:client:setRank', function(...) Xperience:SetRank(...) end)
 
 RegisterNUICallback('xperience_rankchange', function(...) Xperience:OnRankChange(...) end)
+RegisterNUICallback('xperience_ui_initialised', function(...) Xperience:OnUIInitialised(...) end)
+RegisterNUICallback('xperience_ui_closed', function(...) Xperience:OnUIClosed(...) end)
 RegisterNUICallback('xperience_save', function(...) Xperience:OnSave(...) end)
 
 

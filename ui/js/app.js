@@ -7,7 +7,6 @@ const xpBar = container.querySelector(".xperience-progress");
 const barA = container.querySelector(".xperience-indicator--bar");
 const bar = container.querySelector(".xperience-progress--bar");
 const counter = container.querySelector(".xperience-data");
-const lb_container = document.getElementById("xperience_leaderboard");
 
 // UI
 let globalConfig = false;
@@ -18,8 +17,6 @@ let initialised = false;
 // Create XP bar segments
 let segments = 10;
 let rankbar = false;
-let leaderboard = false;
-let currentID = false;
 
 // HELPER FUNCTIONS
 function renderBar() {
@@ -54,27 +51,18 @@ function fillSegments(pr, child) {
 }
 
 function TriggerRankChange(rank, prev, rankUp) {
-    if ( leaderboard && currentID ) {
-        leaderboard.updateRank(currentID, rank);
-    }
-
     PostData("rankchange", {
         current: rank, previous: prev, rankUp: rankUp
     });
 }
 
-function UIOpen(show_lb) {
+function UIOpen() {
     main.classList.add("active");
-
-    if ( show_lb ) {
-        main.classList.add("show-leaderboard");
-    }    
-
     window.clearTimeout(displayTimer);
 }
 
-function UITimeout(show_lb) {
-    UIOpen(show_lb);
+function UITimeout() {
+    UIOpen();
 
     displayTimer = window.setTimeout(() => {
         UIClose();
@@ -82,12 +70,11 @@ function UITimeout(show_lb) {
 }
 
 function UIClose() {
+    main.classList.remove("active");
     window.clearTimeout(displayTimer);
     displayTimer = false;
 
-    main.classList.remove("active", "show-leaderboard");
-
-    // PostData("uichange");
+    PostData("ui_closed");
 }
 
 function PostData(type = "", data = {}) {
@@ -103,31 +90,11 @@ function PostData(type = "", data = {}) {
 }
 
 window.onData = function (data) {
-    
     if (data.xperience_init && !initialised) {
-
         globalConfig = {
             xperience_timeout: data.xperience_timeout,
             xperience_segments: data.xperience_segments,
             xperience_width: data.xperience_width,
-        }
-
-        if ( data.currentID !== false ) {
-            currentID = data.currentID
-        }
-
-        if ( data.leaderboard ) {
-            leaderboard = new Leaderboard({
-                showPing: globalConfig.Leaderboard.ShowPing,
-                perPage: globalConfig.Leaderboard.PerPage,
-                sortBy: globalConfig.Leaderboard.Order
-            });
-
-            leaderboard.render();
-
-            if ( data.players.length > 0 ) {
-                leaderboard.addPlayers(data.players);
-            }
         }
 
         let ranks = [];
@@ -152,7 +119,7 @@ window.onData = function (data) {
                 inner.style.width = `${data.xperience_width}px`;
 
                 // show the xp bar
-                UITimeout();             
+                // UITimeout();        
 
                 // fill to starting XP / rank
                 fillSegments(progress, "lastElementChild");
@@ -170,6 +137,8 @@ window.onData = function (data) {
                 rankB.classList.add(`xp-rank-${this.nextRank}`);                   
 
                 initialised = true;
+
+                PostData('ui_initialised')
             },
 	
             onStart: function(add) {
@@ -263,37 +232,10 @@ window.onData = function (data) {
             rankbar.removeXP(data.xperience_xp);
         }    
     
-        // Show XP bar
-        if (data.xperience_display) {
-            UITimeout();
-        }   
-
         if (data.xperience_show) {
-            UITimeout(data.xbm_lb);
+            UITimeout();
         } else if (data.xperience_hide) {
             UIClose();
-        }
-
-        if ( leaderboard ) {
-            if ( data.xperience_lb_prev ) {
-                UITimeout();
-                leaderboard.prevPage();
-            }
-
-            if ( data.xperience_lb_next ) {
-                UITimeout();
-                leaderboard.nextPage();
-            }  
-            
-            if ( data.xperience_lb_sort ) {
-                leaderboard.config.sortBy = data.xperience_lb_order;
-                leaderboard.update();
-            }
-
-            // Update Leaderboard
-            if (data.xperience_updateleaderboard) {
-                leaderboard.updatePlayers(data.xperience_players);
-            }
         }
     }    
 };
