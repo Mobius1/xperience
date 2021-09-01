@@ -1,6 +1,14 @@
 # xperience
 XP Ranking System for FiveM
 
+
+* Designed to emulate the native GTA:O system
+* Saves and loads players XP / rank
+* Add / remove XP from your own script / job
+* Allows you listen for rank changes to reward players
+* Fully customisable UI
+
+## Table of Contents
 - [Install](#install)
 - [Usage](#usage)
   * [Client](#client)
