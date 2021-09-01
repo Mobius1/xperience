@@ -20,8 +20,6 @@ function Xperience:Init(data)
     RegisterCommand('+xperience', function() self:OpenUI() end)
     RegisterCommand('-xperience', function() end)
     RegisterKeyMapping('+xperience', 'Show Rank Bar', 'keyboard', 'z')
-
-    self:SetRank(1)
 end
 
 function Xperience:Load()
@@ -35,9 +33,9 @@ end
 
 function Xperience:OnRankChange(data, cb)
     if data.rankUp then
-        TriggerEvent("experience:rankUp", data.current, data.previous)
+        TriggerEvent("experience:client:rankUp", data.current, data.previous)
     else
-        TriggerEvent("experience:rankDown", data.current, data.previous)      
+        TriggerEvent("experience:client:rankDown", data.current, data.previous)      
     end
         
     local Rank = Config.Ranks[data.current]
@@ -298,8 +296,10 @@ exports('AddXP', function(...) return Xperience:AddXP(...) end)
 exports('RemoveXP', function(...) return Xperience:RemoveXP(...) end)
 exports('SetXP', function(...) return Xperience:SetXP(...) end)
 exports('SetRank', function(...) return Xperience:SetRank(...) end)
+
 exports('GetXP', function(...) return Xperience:GetXP(...) end)
 exports('GetMaxXP', function(...) return Xperience:GetMaxXP(...) end)
+exports('GetXPToRank', function(...) return Xperience:GetXPToRank(...) end)
 exports('GetXPToNextRank', function(...) return Xperience:GetXPToNextRank(...) end)
 exports('GetRank', function(...) return Xperience:GetRank(...) end)
 exports('GetMaxRank', function(...) return Xperience:GetMaxRank(...) end)

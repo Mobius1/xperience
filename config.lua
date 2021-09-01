@@ -1,6 +1,6 @@
 Config = {}
 
-Config.Locale       = 'en'
+Config.MySQLLib     = 'ghmattimysql' -- or 'mysql-async'
 
 Config.Enabled      = true  -- enable / disable the resource
 Config.Width        = 532   -- Sets the width of the XP bar in px
