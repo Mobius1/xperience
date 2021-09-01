@@ -7,6 +7,7 @@ XP Ranking System for FiveM
 * Add / remove XP from your own script / job
 * Allows you listen for rank changes to reward players
 * Fully customisable UI
+* Framework agnostic
 
 ## Table of Contents
 - [Install](#install)
