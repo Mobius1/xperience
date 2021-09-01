@@ -93,9 +93,9 @@ end)
 ```
 
 ## Rank Actions
-You can define callbacks on each rank by using the `Action` method.
+You can define callbacks on each rank by using the `Action` function.
 
-The function will be called both when the player reaches or drops to the level.
+The function will be called both when the player reaches the rank and drops to the rank.
 
 ```lua
 Config.Ranks = {
