@@ -108,16 +108,16 @@ The function will be called both when the player reaches the rank and drops to t
 
 ```lua
 Config.Ranks = {
-    { XP = 0 },
-    {
+    [1] = { XP = 0 },
+    [2] = {
         XP = 800, -- The XP required to reach this rank
         Action = function(rankUp, prevRank)
             -- rankUp: boolean      - whether the player reached or dropped to this rank
             -- prevRank: number     - the player's previous rank
         end
     },
-    { XP = 2100 },
-    { XP = 3800 },
+    [3] = { XP = 2100 },
+    [4] = { XP = 3800 },
     ...
 }
 ```
