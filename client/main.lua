@@ -19,8 +19,6 @@ function Xperience:Init(data)
         if self.Initialised then
             self:ToggleUI()
         end
-
-        print(self.Initialised, self.UIOpen)
     end)
     RegisterCommand('-xperience', function() end)
     RegisterKeyMapping('+xperience', 'Show Rank Bar', 'keyboard', 'z')
