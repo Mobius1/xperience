@@ -32,15 +32,14 @@ XP Ranking System for FiveM
 * [`ghmattimysql`](https://github.com/GHMatti/ghmattimysql) or [`mysql-async`](https://github.com/brouznouf/fivem-mysql-async)
  
 ## Install
+* Import `xperience.sql`
 * Drop the `xperience` directory into you `resources` directory
 * Add `ensure xperience` to your `server.cfg` file
 
-By default this resource uses `ghmattimysql`, but if you don't want to use / install it then you can use `mysql-async` by following these instructions:
+By default this resource uses `oxmysql`, but if you don't want to use / install it then you can use `mysql-async` by following these instructions:
 
-* In `config.lua` change `Config.MySQLLib = 'ghmattimysql'` to `Config.MySQLLib = 'mysql-async'`
-* Uncomment the `'@mysql-async/lib/MySQL.lua'` line in `fxmanifest.lua`
+* Uncomment the `'@mysql-async/lib/MySQL.lua',` line in `fxmanifest.lua` and comment out the `'@oxmysql/lib/MySQL.lua',` line
 
-The required database table will be installed automatically for you.
 
 ## Usage
 
