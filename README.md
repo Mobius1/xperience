@@ -9,6 +9,17 @@ XP Ranking System for FiveM
 * Fully customisable UI
 * Framework agnostic
 
+
+##### Increasing XP
+
+![Demo Image 1](https://i.imgur.com/CpACt9s.gif)
+
+##### Rank Up
+
+![Demo Image 2](https://i.imgur.com/uNPRGo5.gif)
+
+# STILL UNDER DEVELOPMENT
+
 ## Table of Contents
 - [Install](#install)
 - [Usage](#usage)
