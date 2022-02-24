@@ -29,7 +29,7 @@ XP Ranking System for FiveM
 - [Rank Actions](#rank-actions)
 
 ## Requirements
-* [`ghmattimysql`](https://github.com/GHMatti/ghmattimysql) or [`mysql-async`](https://github.com/brouznouf/fivem-mysql-async)
+* `oxmysql` or `mysql-async`
  
 ## Install
 * Import `xperience.sql`
