@@ -10,6 +10,7 @@ version '0.0.1'
 
 server_scripts {
     -- '@mysql-async/lib/MySQL.lua',
+    '@oxmysql/lib/MySQL.lua',
     'config.lua',
     'common/ranks.lua',
     'common/utils.lua',
