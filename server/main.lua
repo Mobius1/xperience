@@ -7,7 +7,7 @@ function Xperience:Load(src)
     if identifier then
         MySQL.query('SELECT * FROM user_experience WHERE identifier = ?', {  identifier }, function(res)
             if #res == 0 then
-                MySQL.Sync.execute('INSERT INTO user_experience (identifier) VALUES (?)', { identifier }, function(res)
+                MySQL.Async.execute('INSERT INTO user_experience (identifier) VALUES (?)', { identifier }, function(res)
                     result = {
                         identifier = identifier,
                         xp = 0,
