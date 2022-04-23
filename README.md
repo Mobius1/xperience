@@ -8,6 +8,7 @@ XP Ranking System for FiveM
 * Allows you listen for rank changes to reward players
 * Fully customisable UI
 * Framework agnostic
+* Can be set to utilise QBCore and ESX metadata
 
 
 ##### Increasing XP
@@ -40,6 +41,11 @@ By default this resource uses `oxmysql`, but if you don't want to use / install 
 
 * Uncomment the `'@mysql-async/lib/MySQL.lua',` line in `fxmanifest.lua` and comment out the `'@oxmysql/lib/MySQL.lua',` line
 
+## QBCore Support
+Set `Config.UseQBCore` to `true` to allow saving of `xp` and `rank` to the player's metadata
+
+## ESX Support
+Set `Config.UseESX` to `true` to allow saving of `xp` and `rank` to the player's metadata
 
 ## Usage
 

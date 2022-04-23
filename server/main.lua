@@ -11,20 +11,24 @@ function Xperience:Init()
         return
     end
 
+    if Config.UseQBCore and Config.UseESX then
+        return printError("You can't use QBCore and ESX together!")
+    end
+
     if Config.UseQBCore then
         local status = GetResourceState('qb-core')
-        if status == 'started' then
-            QBCore = exports['qb-core']:GetCoreObject()
-        else
+        if status ~= 'started' then
             return printError(string.format('QBCORE is %s!', status))
         end
+
+        QBCore = exports['qb-core']:GetCoreObject()
     elseif Config.UseESX then
         local status = GetResourceState('es_extended')
-        if status == 'started' then
-            ESX = exports['es_extended']:getSharedObject()
-        else
+        if status ~= 'started' then
             return printError(string.format('ESX is %s!', status))
         end
+
+        ESX = exports['es_extended']:getSharedObject()
     end
 
     self.ready = true
