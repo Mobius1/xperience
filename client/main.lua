@@ -3,13 +3,6 @@ local Xperience = {}
 TriggerServerEvent('xperience:server:load')
 
 function Xperience:Init(data)
-    local Ranks = self:CheckRanks()
-    
-    if #Ranks > 0 then
-        PrintTable(Ranks)
-        return
-    end
-
     self.CurrentXP      = tonumber(data.xp)
     self.CurrentRank    = tonumber(data.rank)
 
@@ -21,7 +14,7 @@ function Xperience:Init(data)
         end
     end)
     RegisterCommand('-xperience', function() end)
-    RegisterKeyMapping('+xperience', 'Show Rank Bar', 'keyboard', 'z')
+    RegisterKeyMapping('+xperience', 'Show Rank Bar', 'keyboard', Config.UIKey)
 end
 
 function Xperience:Load()
@@ -110,7 +103,7 @@ end
 ----------------------------------------------------
 
 function Xperience:AddXP(xp)
-    if not self:Validate(xp) then
+    if not isInt(xp) then
         return
     end
 
@@ -123,7 +116,7 @@ function Xperience:AddXP(xp)
 end
 
 function Xperience:RemoveXP(xp)
-    if not self:Validate(xp) then
+    if not isInt(xp) then
         return
     end
 
@@ -138,7 +131,7 @@ function Xperience:RemoveXP(xp)
 end
 
 function Xperience:SetXP(xp)
-    if not self:Validate(xp) then
+    if not isInt(xp) then
         return
     end
     
@@ -154,7 +147,7 @@ function Xperience:SetRank(rank)
     rank = tonumber(rank)
 
     if not rank then
-        self:PrintError('Invalid rank (' .. tostring(rank) .. ') passed to SetRank method')
+        printError('Invalid rank (' .. tostring(rank) .. ') passed to SetRank method')
         return
     end
 
@@ -197,7 +190,7 @@ function Xperience:GetXPToRank(rank)
     local GoalRank = tonumber(rank)
     -- Check for valid rank
     if not GoalRank or (GoalRank < 1 or GoalRank > #Config.Ranks) then
-        self:PrintError('Invalid rank ('.. GoalRank ..') passed to GetXPToRank method')
+        printError('Invalid rank ('.. GoalRank ..') passed to GetXPToRank method')
         return
     end
 
@@ -242,15 +235,6 @@ function Xperience:GetRanksForUI()
     return ranks
 end
 
--- Check XP is an integer
-function Xperience:Validate(xp)
-    xp = tonumber(xp)
-    if xp and xp == math.floor(xp) then
-        return true
-    end
-    return false
-end
-
 -- Prevent XP from going over / under limits
 function Xperience:LimitXP(xp)
     local Max = tonumber(Config.Ranks[#Config.Ranks].XP)
@@ -262,23 +246,6 @@ function Xperience:LimitXP(xp)
     end
 
     return xp
-end
-
-function Xperience:CheckRanks()
-    local Limit = #Config.Ranks
-    local InValid = {}
-
-    for i = 1, Limit do
-        local RankXP = Config.Ranks[i].XP
-
-        if not self:Validate(RankXP) then
-            table.insert(InValid, string.format('Rank %s: %s', i,  RankXP))
-            self:PrintError(string.format('Invalid XP (%s) for Rank %s', RankXP, i))
-        end
-        
-    end
-
-    return InValid
 end
 
 function Xperience:PrintError(message)

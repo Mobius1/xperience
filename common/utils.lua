@@ -37,3 +37,20 @@ function TableSize(t)
 
     return count
 end
+
+-- Check XP is an integer
+function isInt(xp)
+    xp = tonumber(xp)
+    if xp and xp == math.floor(xp) then
+        return true
+    end
+    return false
+end
+
+function printError(message)
+    local out = string.format('^1Error: ^5%s',  message)
+    local s = string.rep("=", string.len(out))
+    print('^1' .. s)
+    print(out)
+    print('^1' .. s .. '^7')  
+end

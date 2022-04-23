@@ -2,11 +2,11 @@ fx_version 'adamant'
 
 game 'gta5'
 
-description 'Xperience - XP Ranking System'
+description 'Xperience - XP Ranking System for FiveM'
 
 author 'Mobius1'
 
-version '0.0.1'
+version '0.1.0'
 
 server_scripts {
     -- '@mysql-async/lib/MySQL.lua',
