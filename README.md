@@ -146,6 +146,8 @@ You can define callbacks on each rank by using the `Action` function.
 
 The function will be called both when the player reaches the rank and drops to the rank.
 
+You can check whether the player reached or dropped to the new rank by utilising the `rankUp` parameter.
+
 ```lua
 Config.Ranks = {
     [1] = { XP = 0 },
