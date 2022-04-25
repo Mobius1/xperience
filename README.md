@@ -245,6 +245,9 @@ Config.Ranks = {
         XP = 24000,
         Action = function(rankUp, prevRank)
             if rankUp then -- only run when player moved up to this rank
+                local player = PlayerPedId()
+                local weapon = `WEAPON_MINIGUN`
+        
                 if not HasPedGotWeapon(player, weapon, false) then
                     -- Player doesn't have weapon so give it them loaded with 500 bullets
                     GiveWeaponToPed(player, weapon, 500, false, false)
