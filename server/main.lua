@@ -1,7 +1,13 @@
-local QBCore, ESX = nil, nil
+local MySQLReady, QBCore, ESX = false, nil, nil
 local Xperience = {}
 
+MySQL.ready(function()
+    MySQLReady = true
+end)
+
 function Xperience:Init()
+    while not MySQLReady do Wait(5) end
+
     self.ready = false
 
     local Ranks = self:CheckRanks()
@@ -53,74 +59,94 @@ end
 
 function Xperience:Load(src)
     if self.ready then
-        local identifier = self:GetPlayerID(src)
         local resp, result = false, false
-
-        if identifier then
-            MySQL.query('SELECT * FROM user_experience WHERE identifier = ?', {  identifier }, function(res)
-                if #res == 0 then
-                    MySQL.Async.execute('INSERT INTO user_experience (identifier) VALUES (?)', { identifier }, function(res)
-                        result = {
-                            identifier = identifier,
-                            xp = 0,
-                            rank = 1
-                        }
-                        resp = true
-                    end)
-                else
-                    result = res[1]
-                    resp = true
-                end
-            end)
-        else
-            resp = true
-            result = false
-        end
-
-        while not resp do Wait(0) end
 
         if Config.UseQBCore then
             local Player = QBCore.Functions.GetPlayer(src)
+            if Player then
+                result = {}
+                result.xp = tonumber(Player.PlayerData.metadata.xp)
+                result.rank = tonumber(Player.PlayerData.metadata.rank)
+                
+                resp = true
+            end
+        else
+            local license = self:GetPlayerLicense(src)
+            
+            if Config.UseESX then
+                MySQL.query('SELECT * FROM users WHERE license = ?', { license }, function(res)
+                    if res[1] then
+                        result = {}
+                        result.xp = tonumber(res[1].xp)
+                        result.rank = tonumber(res[1].rank)
 
-            Player.Functions.SetMetaData('xp', tonumber(result.xp))
-            Player.Functions.SetMetaData('rank', tonumber(result.rank))
-        elseif Config.UseESX then
-            local Player = ESX.GetPlayerFromId(src)
+                        local Player = ESX.GetPlayerFromId(src)
+                        Player.set("xp", result.xp)
+                        Player.set("rank", result.rank)
 
-            Player.set("xp", tonumber(result.xp))
-            Player.set("rank", tonumber(result.rank))
+                        resp = true
+                    end
+                end)
+            else
+                MySQL.query('SELECT * FROM user_experience WHERE identifier = ?', { license }, function(res)
+                    if res[1] then
+                        result = {}
+                        result.xp = tonumber(res[1].xp)
+                        result.rank = tonumber(res[1].rank)
+
+                        resp = true
+                    end
+                end)
+            end
         end
+
+
+        while not resp do Wait(0) end
 
         TriggerClientEvent('xperience:client:init', src, result)
     end
 end
 
 function Xperience:Save(src, xp, rank)
-    local identifier = self:GetPlayerID(src)
+    if Config.UseQBCore then
+        local Player = QBCore.Functions.GetPlayer(src)
 
-    if identifier then
-        if Config.UseQBCore then
-            local Player = QBCore.Functions.GetPlayer(src)
-
-            Player.Functions.SetMetaData('xp', tonumber(xp))
-            Player.Functions.SetMetaData('rank', tonumber(rank))
-        elseif Config.UseESX then
+        Player.Functions.SetMetaData('xp', tonumber(xp))
+        Player.Functions.SetMetaData('rank', tonumber(rank))
+        Player.Functions.Save()
+    else
+        local license = self:GetPlayerLicense(src)
+        if Config.UseESX then
             local Player = ESX.GetPlayerFromId(src)
 
             Player.set("xp", tonumber(xp))
             Player.set("rank", tonumber(rank))
-        end
 
-        MySQL.Sync.update('UPDATE user_experience SET xp = ?, rank = ? WHERE identifier = ?', { xp, rank, identifier })
+            MySQL.update('UPDATE users SET xp = ?, rank = ? WHERE identifier = ?', { xp, rank, license }, function(affectedRows)
+                if not affectedRows then
+                    printError('There was a problem saving the user\'s data!')
+                end
+            end)
+        else
+            MySQL.update('UPDATE user_experience SET xp = ?, rank = ? WHERE identifier = ?', { xp, rank, license }, function(affectedRows)
+                if not affectedRows then
+                    printError('There was a problem saving the user\'s data!')
+                end
+            end)
+        end
     end
 end
 
-function Xperience:GetPlayerID(src)
+function Xperience:GetPlayerLicense(src)
     local license = false
 
-    for k, v in pairs(GetPlayerIdentifiers(src))do
-        if string.sub(v, 1, string.len('license:')) == 'license:' then
-            license = string.sub(v, 9, string.len(v))
+    for _, id in pairs(GetPlayerIdentifiers(src)) do
+        if string.sub(id, 1, string.len('license:')) == 'license:' then
+            if Config.UseESX then
+                license = id
+            else
+                license = string.sub(id, 9, string.len(id))
+            end
             break
         end
     end 

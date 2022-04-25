@@ -31,7 +31,5 @@ files {
     'ui/fonts/ChaletComprimeCologneSixty.ttf',
     'ui/css/app.css',
     'ui/js/class.xperience.js',
-    'ui/js/class.paginator.js',
-    'ui/js/class.leaderboard.js',
     'ui/js/app.js'
 }
