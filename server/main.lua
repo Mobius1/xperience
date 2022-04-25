@@ -181,6 +181,30 @@ function Xperience:GetPlayerRank(playerId)
     end
 end
 
+function Xperience:GetPlayerXPToNextRank(playerId)
+    local currentXP = self:GetPlayerXP(playerId)
+    local currentRank = self:GetPlayerRank(playerId)
+
+    return Config.Ranks[currentRank + 1].XP - tonumber(currentXP)   
+end
+
+function Xperience:GetPlayerXPToRank(playerId, rank)
+
+    assert(isInt(rank), 'Invalid rank passed to GetPlayerXPToRank()')
+
+    local currentXP = self:GetPlayerXP(playerId)
+    local rank = tonumber(rank)
+    -- Check for valid rank
+    if not rank or (rank < 1 or rank > #Config.Ranks) then
+        printError('Invalid rank ('.. rank ..') passed to GetPlayerXPToRank method')
+        return
+    end
+
+    local goalXP = tonumber(Config.Ranks[rank].XP)
+
+    return goalXP - currentXP
+end
+
 function Xperience:GetPlayerLicense(src)
     local license = false
 
@@ -205,3 +229,5 @@ RegisterNetEvent('xperience:server:save', function(xp, rank) Xperience:Save(sour
 
 exports('GetPlayerXP', function(playerID) return Xperience:GetPlayerXP(playerID) end)
 exports('GetPlayerRank', function(playerID) return Xperience:GetPlayerRank(playerID) end)
+exports('GetPlayerXPToRank', function(playerID, rank) return Xperience:GetPlayerXPToRank(playerID, rank) end)
+exports('GetPlayerXPToNextRank', function(playerID) return Xperience:GetPlayerXPToNextRank(playerID) end)

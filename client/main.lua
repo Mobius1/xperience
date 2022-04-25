@@ -1,6 +1,18 @@
 local Xperience = {}
 
-TriggerServerEvent('xperience:server:load')
+if Config.UseESX then
+    AddEventHandler('esx:playerLoaded', function()
+        TriggerServerEvent('xperience:server:load')
+    end)
+elseif Config.UseQBCore then
+    AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+        TriggerServerEvent('xperience:server:load')
+    end)
+else
+    AddEventHandler("playerSpawned", function()
+        TriggerServerEvent('xperience:server:load')
+    end)
+end
 
 function Xperience:Init(data)
     self.CurrentXP      = tonumber(data.xp)
