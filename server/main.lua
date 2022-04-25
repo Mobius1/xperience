@@ -137,6 +137,50 @@ function Xperience:Save(src, xp, rank)
     end
 end
 
+function Xperience:GetPlayerXP(playerId)
+    if Config.UseQBCore then
+        local Player = QBCore.Functions.GetPlayer(playerId)
+
+        if Player then
+            return Player.PlayerData.metadata.xp
+        end
+    elseif Config.UseESX then
+        local Player = ESX.GetPlayerFromId(playerId)
+
+        if Player then
+            return tonumber(Player.get("xp"))
+        end
+    else
+        local license = self:GetPlayerLicense(playerId)
+        local xp = MySQL.Sync.fetchScalar('SELECT xp FROM user_experience WHERE identifier = ?', { license })
+
+        return tonumber(xp)
+    end
+
+    return false
+end
+
+function Xperience:GetPlayerRank(playerId)
+    if Config.UseQBCore then
+        local Player = QBCore.Functions.GetPlayer(playerId)
+
+        if Player then
+            return Player.PlayerData.metadata.rank
+        end
+    elseif Config.UseESX then
+        local Player = ESX.GetPlayerFromId(playerId)
+    
+        if Player then
+            return tonumber(Player.get("rank"))
+        end
+    else
+        local license = self:GetPlayerLicense(playerId)
+        local rank = MySQL.Sync.fetchScalar('SELECT rank FROM user_experience WHERE identifier = ?', { license })
+    
+        return tonumber(rank)
+    end
+end
+
 function Xperience:GetPlayerLicense(src)
     local license = false
 
@@ -158,3 +202,6 @@ CreateThread(function() Xperience:Init() end)
 
 RegisterNetEvent('xperience:server:load', function() Xperience:Load(source) end)
 RegisterNetEvent('xperience:server:save', function(xp, rank) Xperience:Save(source, xp, rank) end)
+
+exports('GetPlayerXP', function(playerID) return Xperience:GetPlayerXP(playerID) end)
+exports('GetPlayerRank', function(playerID) return Xperience:GetPlayerRank(playerID) end)

@@ -7,8 +7,7 @@ XP Ranking System for FiveM
 * Add / remove XP from your own script / job
 * Allows you listen for rank changes to reward players
 * Fully customisable UI
-* Framework agnostic
-* Can be set to utilise QBCore and ESX metadata
+* Framework agnostic, but supports `ESX` and `QBCore`
 
 
 ##### Increasing XP
@@ -28,12 +27,15 @@ XP Ranking System for FiveM
   * [Server](#server)
 - [Rank Events](#rank-events)
 - [Rank Actions](#rank-actions)
+- [QBCore Integration](#qbcore-integration)
 
 ## Requirements
 * `oxmysql` or `mysql-async`
  
 ## Install
-* Import `xperience.sql`
+* If you want to use `xperience` as a standalone resource then import `xperience_standalone.sql` only
+* If using `ESX` with `Config.UseESX` set to `true` then import `xperience_esx.sql` only. This adds the `xp` and `rank` columns to the `users` table
+* If using `QBCore` with `Config.UseQBCore` set to `true` then there's no need to import any `sql` files as the xp and rank are saved to the player's metadata - see [QBCore Integration](#qbcore-integration)
 * Drop the `xperience` directory into you `resources` directory
 * Add `ensure xperience` to your `server.cfg` file
 
@@ -41,15 +43,12 @@ By default this resource uses `oxmysql`, but if you don't want to use / install 
 
 * Uncomment the `'@mysql-async/lib/MySQL.lua',` line in `fxmanifest.lua` and comment out the `'@oxmysql/lib/MySQL.lua',` line
 
-## QBCore Support
-Set `Config.UseQBCore` to `true` to allow saving of `xp` and `rank` to the player's metadata
-
-## ESX Support
-Set `Config.UseESX` to `true` to allow saving of `xp` and `rank` to the player's metadata
 
 ## Usage
 
-### Client
+### Client Side
+
+#### Exports
 Give XP to player
 ```lua
 exports.xperience:AddXP(xp --[[ integer ]])
@@ -90,15 +89,28 @@ Get XP required to reach defined rank
 exports.xperience:GetXPToRank(rank --[[ integer ]])
 ```
 
-### Server
+### Server Side
+
+#### Exports
+Get player's XP
 ```lua
-TriggerClientEvent('xperience:client:addXP', source --[[ integer ]], xp --[[ integer ]])
+exports.xperience:GetPlayerXP(playerId --[[ integer ]])
+```
 
-TriggerClientEvent('xperience:client:removeXP', source --[[ integer ]], xp --[[ integer ]])
+Get player's rank
+```lua
+exports.xperience:GetPlayerRank(playerId --[[ integer ]])
+```
 
-TriggerClientEvent('xperience:client:setXP', source --[[ integer ]], xp --[[ integer ]])
+#### Events
+```lua
+TriggerClientEvent('xperience:client:addXP', playerId --[[ integer ]], xp --[[ integer ]])
 
-TriggerClientEvent('xperience:client:setRank', source --[[ integer ]], rank --[[ integer ]])
+TriggerClientEvent('xperience:client:removeXP', playerId --[[ integer ]], xp --[[ integer ]])
+
+TriggerClientEvent('xperience:client:setXP', playerId --[[ integer ]], xp --[[ integer ]])
+
+TriggerClientEvent('xperience:client:setRank', playerId --[[ integer ]], rank --[[ integer ]])
 ```
 
 ## Rank Events
@@ -136,4 +148,22 @@ Config.Ranks = {
     [4] = { XP = 3800 },
     ...
 }
+```
+
+## QBCore Integration
+
+If `Config.UseQBCore` is set to `true` then the player's xp and rank are stored in their metadata. The metadata is saved whenever a player's xp / rank changes.
+
+#### Client
+```lua
+local PlayerData = QBCore.Functions.GetPlayerData()
+local xp = PlayerData.metadata.xp
+local rank = PlayerData.metadata.rank
+```
+
+#### Server
+```lua
+local Player = QBCore.Functions.GetPlayer(src)
+local xp = Player.PlayerData.metadata.xp
+local rank = Player.PlayerData.metadata.rank
 ```
