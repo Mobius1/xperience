@@ -22,15 +22,13 @@ XP Ranking System for FiveM
 
 ## Table of Contents
 - [Install](#install)
+- [Transitioning from esx_xp](#transitioning-from-esx_xp)
 - [Usage](#usage)
   * [Client](#client)
   * [Server](#server)
 - [Rank Events](#rank-events)
 - [Rank Actions](#rank-actions)
 - [QBCore Integration](#qbcore-integration)
-
-## Requirements
-* `oxmysql` or `mysql-async`
  
 ## Install
 * If you want to use `xperience` as a standalone resource then import `xperience_standalone.sql` only
@@ -41,8 +39,11 @@ XP Ranking System for FiveM
 
 By default this resource uses `oxmysql`, but if you don't want to use / install it then you can use `mysql-async` by following these instructions:
 
-* Uncomment the `'@mysql-async/lib/MySQL.lua',` line in `fxmanifest.lua` and comment out the `'@oxmysql/lib/MySQL.lua',` line
+* Uncomment the `'@mysql-async/lib/MySQL.lua',` line in `fxmanifest.lua` and comment out the `'@oxmysql/lib/MySQL.lua'` line
 
+## Transitioning from esx_xp
+* Rename the `rp_xp` column in the `users` table to `xp`
+* Rename the `rp_rank` column in the `users` table to `rank`
 
 ## Usage
 
@@ -100,6 +101,16 @@ exports.xperience:GetPlayerXP(playerId --[[ integer ]])
 Get player's rank
 ```lua
 exports.xperience:GetPlayerRank(playerId --[[ integer ]])
+```
+
+Get player's required XP to rank up
+```lua
+exports.xperience:GetPlayerXPToNextRank(playerId --[[ integer ]])
+```
+
+Get player's required XP to reach defined rank
+```lua
+exports.xperience:GetPlayerXPToRank(playerId --[[ integer ]], rank --[[ integer ]])
 ```
 
 #### Events
