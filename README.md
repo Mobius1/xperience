@@ -181,7 +181,7 @@ local rank = Player.PlayerData.metadata.rank
 ```
 
 # FAQ
-### How do I do give XP to a player when they've done something?
+### How do I give XP to a player when they've done something?
 
 Example of giving a player 100 XP for shooting another player
 ```lua
