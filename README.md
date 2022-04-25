@@ -129,14 +129,14 @@ TriggerClientEvent('xperience:client:setRank', playerId --[[ integer ]], rank --
 
 Listen for rank up event
 ```lua
-AddEventHandler("experience:client:rankUp", function(newRank, previousRank)
+AddEventHandler("experience:client:rankUp", function(newRank, previousRank, player)
     -- do something when player ranks up
 end)
 ```
 
 Listen for rank down event
 ```lua
-AddEventHandler("experience:client:rankDown", function(newRank, previousRank)
+AddEventHandler("experience:client:rankDown", function(newRank, previousRank, player)
     -- do something when player ranks down
 end)
 ```
@@ -151,9 +151,10 @@ Config.Ranks = {
     [1] = { XP = 0 },
     [2] = {
         XP = 800, -- The XP required to reach this rank
-        Action = function(rankUp, prevRank)
+        Action = function(rankUp, prevRank, player)
             -- rankUp: boolean      - whether the player reached or dropped to this rank
             -- prevRank: number     - the player's previous rank
+            -- player: integer      - The current player            
         end
     },
     [3] = { XP = 2100 },
@@ -213,9 +214,8 @@ Example of giving a minigun with `500` bullets to a player for reaching rank `10
 
 #### Rank Event
 ```lua
-AddEventHandler("experience:client:rankUp", function(newRank, previousRank)
+AddEventHandler("experience:client:rankUp", function(newRank, previousRank, player)
     if newRank == 10 then
-        local player = PlayerPedId()
         local weapon = `WEAPON_MINIGUN`
         
         if not HasPedGotWeapon(player, weapon, false) then
@@ -243,9 +243,8 @@ Config.Ranks = {
     [9] = { XP = 19800 },
     [10] = {
         XP = 24000,
-        Action = function(rankUp, prevRank)
+        Action = function(rankUp, prevRank, player)
             if rankUp then -- only run when player moved up to this rank
-                local player = PlayerPedId()
                 local weapon = `WEAPON_MINIGUN`
         
                 if not HasPedGotWeapon(player, weapon, false) then

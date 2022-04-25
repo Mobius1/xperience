@@ -2,9 +2,10 @@ Config.Ranks = {
     [1] = { XP = 0 },
     [2] = {
         XP = 800, -- The XP required to reach this rank
-        Action = function(rankUp, prevRank)
+        Action = function(rankUp, prevRank, player)
             -- rankUp: boolean      - whether the player reached or dropped to this rank
             -- prevRank: number     - the player's previous rank
+            -- player: integer      - The current player
         end
     },
     [3] = { XP = 2100 },

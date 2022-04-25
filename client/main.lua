@@ -1,5 +1,7 @@
 local Xperience = {}
 
+TriggerServerEvent('xperience:server:load')
+
 if Config.UseESX then
     AddEventHandler('esx:playerLoaded', function()
         TriggerServerEvent('xperience:server:load')
@@ -39,16 +41,18 @@ end
 ----------------------------------------------------
 
 function Xperience:OnRankChange(data, cb)
+    local player = PlayerPedId()
+
     if data.rankUp then
-        TriggerEvent("experience:client:rankUp", data.current, data.previous)
+        TriggerEvent("experience:client:rankUp", data.current, data.previous, player)
     else
-        TriggerEvent("experience:client:rankDown", data.current, data.previous)      
+        TriggerEvent("experience:client:rankDown", data.current, data.previous, player)      
     end
         
     local Rank = Config.Ranks[data.current]
     
     if Rank.Action ~= nil and type(Rank.Action) == "function" then
-        Rank.Action(data.rankUp, data.previous)
+        Rank.Action(data.rankUp, data.previous, player)
     end
     
     cb('ok')
