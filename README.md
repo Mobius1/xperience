@@ -29,6 +29,7 @@ XP Ranking System for FiveM
 - [Rank Events](#rank-events)
 - [Rank Actions](#rank-actions)
 - [QBCore Integration](#qbcore-integration)
+- [FAQ](#faq)
  
 ## Install
 * If you want to use `xperience` as a standalone resource then import `xperience_standalone.sql` only
@@ -177,4 +178,84 @@ local rank = PlayerData.metadata.rank
 local Player = QBCore.Functions.GetPlayer(src)
 local xp = Player.PlayerData.metadata.xp
 local rank = Player.PlayerData.metadata.rank
+```
+
+# FAQ
+### How do I do give XP to a player when they've done something?
+
+Example of giving a player 100 XP for shooting another player
+```lua
+AddEventHandler('gameEventTriggered', function(event, data)
+    if event == "CEventNetworkEntityDamage" then
+        local victim      = tonumber(data[1])
+        local attacker    = tonumber(data[2])
+        local weaponHash  = tonumber(data[5])
+        local meleeDamage = tonumber(data[10]) ~= 0 and true or false 
+
+        -- Don't register melee damage
+        if not meleeDamage then
+            -- Check victim and attacker are both players
+            if (IsEntityAPed(victim) and IsPedAPlayer(victim)) and (IsEntityAPed(attacker) and IsPedAPlayer(attacker)) then
+                if attacker == PlayerPedId() then -- We are the attacker
+                    exports.xperience:AddXP(100) -- Give player 100 xp for getting a hit
+                end
+            end
+        end
+    end
+end)
+```
+
+### How do I do something when a player's rank changes?
+
+You can either utilise [Rank Events](#rank-events) or [Rank Actions](#rank-actions).
+
+Example of giving a minigun with `500` bullets to a player for reaching rank `10`:
+
+#### Rank Event
+```lua
+AddEventHandler("experience:client:rankUp", function(newRank, previousRank)
+    if newRank == 10 then
+        local player = PlayerPedId()
+        local weapon = `WEAPON_MINIGUN`
+        
+        if not HasPedGotWeapon(player, weapon, false) then
+            -- Player doesn't have weapon so give it them loaded with 500 bullets
+            GiveWeaponToPed(player, weapon, 500, false, false)
+        else
+            -- Player has the weapon so give them 500 bullets for it
+            AddAmmoToPed(player, weapon, 500)
+        end
+    end
+end)
+```
+
+#### Rank Action
+```lua
+Config.Ranks = {
+    [1] = { XP = 0 },
+    [2] = { XP = 800 },
+    [3] = { XP = 2100 },
+    [4] = { XP = 3800 },
+    [5] = { XP = 6100 },
+    [6] = { XP = 9500 },
+    [7] = { XP = 12500 },
+    [8] = { XP = 16000 },
+    [9] = { XP = 19800 },
+    [10] = {
+        XP = 24000,
+        Action = function(rankUp, prevRank)
+            if rankUp then -- only run when player moved up to this rank
+                if not HasPedGotWeapon(player, weapon, false) then
+                    -- Player doesn't have weapon so give it them loaded with 500 bullets
+                    GiveWeaponToPed(player, weapon, 500, false, false)
+                else
+                    -- Player has the weapon so give them 500 bullets for it
+                    AddAmmoToPed(player, weapon, 500)
+                end
+            end
+        end
+    },
+    [11] = { XP = 28500 },
+    ...
+}
 ```
