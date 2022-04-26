@@ -224,8 +224,18 @@ end
 
 CreateThread(function() Xperience:Init() end)
 
+
+----------------------------------------------------
+--                 EVENT HANDLERS                 --
+----------------------------------------------------
+
 RegisterNetEvent('xperience:server:load', function() Xperience:Load(source) end)
 RegisterNetEvent('xperience:server:save', function(xp, rank) Xperience:Save(source, xp, rank) end)
+
+
+----------------------------------------------------
+--                    EXPORTS                     --
+----------------------------------------------------
 
 exports('GetPlayerXP', function(playerID) return Xperience:GetPlayerXP(playerID) end)
 exports('GetPlayerRank', function(playerID) return Xperience:GetPlayerRank(playerID) end)

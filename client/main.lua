@@ -1,19 +1,10 @@
 local Xperience = {}
-
-TriggerServerEvent('xperience:server:load')
+local event = 'playerSpawned'
 
 if Config.UseESX then
-    AddEventHandler('esx:playerLoaded', function()
-        TriggerServerEvent('xperience:server:load')
-    end)
+    event = 'esx:playerLoaded'
 elseif Config.UseQBCore then
-    AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
-        TriggerServerEvent('xperience:server:load')
-    end)
-else
-    AddEventHandler("playerSpawned", function()
-        TriggerServerEvent('xperience:server:load')
-    end)
+    event = 'QBCore:Client:OnPlayerLoaded'
 end
 
 function Xperience:Init(data)
@@ -29,10 +20,6 @@ function Xperience:Init(data)
     end)
     RegisterCommand('-xperience', function() end)
     RegisterKeyMapping('+xperience', 'Show Rank Bar', 'keyboard', Config.UIKey)
-end
-
-function Xperience:Load()
-    TriggerServerEvent('xperience:server:load')
 end
 
 
@@ -277,22 +264,13 @@ end
 --                 EVENT HANDLERS                 --
 ----------------------------------------------------
 
-AddEventHandler('playerSpawned', function(...) Xperience:Load(...) end)
+AddEventHandler(event, function() TriggerServerEvent('xperience:server:load') end)
 
-RegisterNetEvent('xperience:client:init')
-AddEventHandler('xperience:client:init', function(...) Xperience:Init(...) end)
-
-RegisterNetEvent('xperience:client:addXP')
-AddEventHandler('xperience:client:addXP', function(...) Xperience:AddXP(...) end)
-
-RegisterNetEvent('xperience:client:removeXP')
-AddEventHandler('xperience:client:removeXP', function(...) Xperience:RemoveXP(...) end)
-
-RegisterNetEvent('xperience:client:setXP')
-AddEventHandler('xperience:client:setXP', function(...) Xperience:SetXP(...) end)
-
-RegisterNetEvent('xperience:client:setRank')
-AddEventHandler('xperience:client:setRank', function(...) Xperience:SetRank(...) end)
+RegisterNetEvent('xperience:client:init', function(...) Xperience:Init(...) end)
+RegisterNetEvent('xperience:client:addXP', function(...) Xperience:AddXP(...) end)
+RegisterNetEvent('xperience:client:removeXP', function(...) Xperience:RemoveXP(...) end)
+RegisterNetEvent('xperience:client:setXP', function(...) Xperience:SetXP(...) end)
+RegisterNetEvent('xperience:client:setRank', function(...) Xperience:SetRank(...) end)
 
 RegisterNUICallback('xperience_rankchange', function(...) Xperience:OnRankChange(...) end)
 RegisterNUICallback('xperience_ui_initialised', function(...) Xperience:OnUIInitialised(...) end)
