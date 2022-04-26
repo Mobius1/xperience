@@ -18,20 +18,20 @@ XP Ranking System for FiveM
 
 ![Demo Image 2](https://i.imgur.com/uNPRGo5.gif)
 
-# STILL UNDER DEVELOPMENT
-
 ## Table of Contents
 - [Install](#install)
-- [Transitioning from esx_xp](#transitioning-from-esx_xp)
+- [Transitioning from esx_xp](#transitioning-from-esx-xp)
 - [Usage](#usage)
-  * [Client](#client)
-  * [Server](#server)
+    * [Client Side](#client-side)
+    * [Server Side](#server-side)
 - [Rank Events](#rank-events)
 - [Rank Actions](#rank-actions)
 - [QBCore Integration](#qbcore-integration)
 - [FAQ](#faq)
- 
+
+
 ## Install
+
 * If you want to use `xperience` as a standalone resource then import `xperience_standalone.sql` only
 * If using `ESX` with `Config.UseESX` set to `true` then import `xperience_esx.sql` only. This adds the `xp` and `rank` columns to the `users` table
 * If using `QBCore` with `Config.UseQBCore` set to `true` then there's no need to import any `sql` files as the xp and rank are saved to the player's metadata - see [QBCore Integration](#qbcore-integration)
@@ -43,6 +43,7 @@ By default this resource uses `oxmysql`, but if you don't want to use / install 
 * Uncomment the `'@mysql-async/lib/MySQL.lua',` line in `fxmanifest.lua` and comment out the `'@oxmysql/lib/MySQL.lua'` line
 
 ## Transitioning from esx_xp
+If you previously used `esx_xp` then do the following to make your current stored data compatible with `xperience` 
 * Rename the `rp_xp` column in the `users` table to `xp`
 * Rename the `rp_rank` column in the `users` table to `rank`
 
