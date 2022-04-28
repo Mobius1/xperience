@@ -1,5 +1,5 @@
 // Markup
-const main = document.getElementById("xperience_main");
+const main = document.getElementById("main");
 const container = document.querySelector(".xperience");
 const inner = document.querySelector(".xperience-inner");
 const [ rankA, rankB ] = [...container.querySelectorAll(".xperience-rank")];
@@ -66,7 +66,7 @@ function UITimeout() {
 
     displayTimer = window.setTimeout(() => {
         UIClose();
-    }, globalConfig.xperience_timeout);
+    }, globalConfig.timeout);
 }
 
 function UIClose() {
@@ -80,7 +80,7 @@ function UIClose() {
 function PostData(type = "", data = {}) {
     const resourceName = GetParentResourceName();
 
-    fetch(`https://${resourceName}/xperience_${type}`, {
+    fetch(`https://${resourceName}/${type}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=UTF-8',
@@ -90,33 +90,33 @@ function PostData(type = "", data = {}) {
 }
 
 window.onData = function (data) {
-    if (data.xperience_init && !initialised) {
+    if (data.init && !initialised) {
         globalConfig = {
-            xperience_timeout: data.xperience_timeout,
-            xperience_segments: data.xperience_segments,
-            xperience_width: data.xperience_width,
+            timeout: data.timeout,
+            segments: data.segments,
+            width: data.width,
         }
 
         let ranks = [];
 
-        for ( let i = 0; i < data.xperience_ranks.length; i++ ) {
-            ranks[i+1] = data.xperience_ranks[i];
+        for ( let i = 0; i < data.ranks.length; i++ ) {
+            ranks[i+1] = data.ranks[i];
         }
 
         // Class rankbar
         rankbar = new Xperience({
-            xp: data.xperience_xp,
+            xp: data.xp,
             ranks: ranks,
 
             // set initial XP / rank
             onInit: function (progress) {
 
-                segments = data.xperience_segments
+                segments = data.segments
 
                 // create segmented progress bar
                 renderBar();
 
-                inner.style.width = `${data.xperience_width}px`;
+                inner.style.width = `${data.width}px`;
 
                 // show the xp bar
                 // UITimeout();        
@@ -218,23 +218,23 @@ window.onData = function (data) {
 
     if ( initialised ) {
         // Set XP
-        if (data.xperience_set) {
-            rankbar.setXP(data.xperience_xp);
+        if (data.set) {
+            rankbar.setXP(data.xp);
         }
 
         // Add XP
-        if (data.xperience_add) {
-            rankbar.addXP(data.xperience_xp);
+        if (data.add) {
+            rankbar.addXP(data.xp);
         }
 
         // Remove XP
-        if (data.xperience_remove) {
-            rankbar.removeXP(data.xperience_xp);
+        if (data.remove) {
+            rankbar.removeXP(data.xp);
         }    
     
-        if (data.xperience_show) {
+        if (data.show) {
             UITimeout();
-        } else if (data.xperience_hide) {
+        } else if (data.hide) {
             UIClose();
         }
     }    

@@ -40,23 +40,6 @@ function Xperience:Init()
     self.ready = true
 end
 
-function Xperience:CheckRanks()
-    local Limit = #Config.Ranks
-    local InValid = {}
-
-    for i = 1, Limit do
-        local RankXP = Config.Ranks[i].XP
-
-        if not isInt(RankXP) then
-            table.insert(InValid, string.format('Rank %s: %s', i,  RankXP))
-            printError(string.format('Invalid XP (%s) for Rank %s', RankXP, i))
-        end
-        
-    end
-
-    return InValid
-end
-
 function Xperience:Load(src)
     if self.ready then
         local resp, result = false, false
@@ -65,16 +48,16 @@ function Xperience:Load(src)
             local Player = QBCore.Functions.GetPlayer(src)
             if Player then
                 result = {}
-                result.xp = tonumber(Player.PlayerData.metadata.xp)
-                result.rank = tonumber(Player.PlayerData.metadata.rank)
+                result.xp = tonumber(Player.PlayerData.metadata.xp) or 0
+                result.rank = tonumber(Player.PlayerData.metadata.rank) or 1
                 
                 resp = true
             end
         else
-            local license = self:GetPlayerLicense(src)
+            local license = self:GetPlayer(src)
             
             if Config.UseESX then
-                MySQL.query('SELECT * FROM users WHERE license = ?', { license }, function(res)
+                MySQL.Async.fetchAll('SELECT * FROM users WHERE license = ?', { license }, function(res)
                     if res[1] then
                         result = {}
                         result.xp = tonumber(res[1].xp)
@@ -88,7 +71,7 @@ function Xperience:Load(src)
                     end
                 end)
             else
-                MySQL.query('SELECT * FROM user_experience WHERE identifier = ?', { license }, function(res)
+                MySQL.Async.fetchAll('SELECT * FROM user_experience WHERE identifier = ?', { license }, function(res)
                     if res[1] then
                         result = {}
                         result.xp = tonumber(res[1].xp)
@@ -100,8 +83,11 @@ function Xperience:Load(src)
             end
         end
 
-
         while not resp do Wait(0) end
+
+        if Config.Debug then
+            print(string.format("^5LOADED DATA FOR PLAYER: %s (XP %s, Rank %s)^7", GetPlayerName(src), result.xp, result.rank))
+        end
 
         TriggerClientEvent('xperience:client:init', src, result)
     end
@@ -115,25 +101,29 @@ function Xperience:Save(src, xp, rank)
         Player.Functions.SetMetaData('rank', tonumber(rank))
         Player.Functions.Save()
     else
-        local license = self:GetPlayerLicense(src)
+        local license = self:GetPlayer(src)
         if Config.UseESX then
             local Player = ESX.GetPlayerFromId(src)
 
             Player.set("xp", tonumber(xp))
             Player.set("rank", tonumber(rank))
 
-            MySQL.update('UPDATE users SET xp = ?, rank = ? WHERE identifier = ?', { xp, rank, license }, function(affectedRows)
+            MySQL.Async.execute('UPDATE users SET xp = ?, rank = ? WHERE identifier = ?', { xp, rank, license }, function(affectedRows)
                 if not affectedRows then
                     printError('There was a problem saving the user\'s data!')
                 end
             end)
         else
-            MySQL.update('UPDATE user_experience SET xp = ?, rank = ? WHERE identifier = ?', { xp, rank, license }, function(affectedRows)
+            MySQL.Async.execute('UPDATE user_experience SET xp = ?, rank = ? WHERE identifier = ?', { xp, rank, license }, function(affectedRows)
                 if not affectedRows then
                     printError('There was a problem saving the user\'s data!')
                 end
             end)
         end
+    end
+
+    if Config.Debug then
+        print(string.format("^5SAVED DATA FOR PLAYER: %s (XP %s, Rank %s)^7", GetPlayerName(src), xp, rank))
     end
 end
 
@@ -151,7 +141,7 @@ function Xperience:GetPlayerXP(playerId)
             return tonumber(Player.get("xp"))
         end
     else
-        local license = self:GetPlayerLicense(playerId)
+        local license = self:GetPlayer(playerId)
         local xp = MySQL.Sync.fetchScalar('SELECT xp FROM user_experience WHERE identifier = ?', { license })
 
         return tonumber(xp)
@@ -174,7 +164,7 @@ function Xperience:GetPlayerRank(playerId)
             return tonumber(Player.get("rank"))
         end
     else
-        local license = self:GetPlayerLicense(playerId)
+        local license = self:GetPlayer(playerId)
         local rank = MySQL.Sync.fetchScalar('SELECT rank FROM user_experience WHERE identifier = ?', { license })
     
         return tonumber(rank)
@@ -185,15 +175,13 @@ function Xperience:GetPlayerXPToNextRank(playerId)
     local currentXP = self:GetPlayerXP(playerId)
     local currentRank = self:GetPlayerRank(playerId)
 
-    return Config.Ranks[currentRank + 1].XP - tonumber(currentXP)   
+    return tonumber(Config.Ranks[currentRank + 1].XP) - tonumber(currentXP)   
 end
 
 function Xperience:GetPlayerXPToRank(playerId, rank)
-
-    assert(isInt(rank), 'Invalid rank passed to GetPlayerXPToRank()')
-
     local currentXP = self:GetPlayerXP(playerId)
     local rank = tonumber(rank)
+
     -- Check for valid rank
     if not rank or (rank < 1 or rank > #Config.Ranks) then
         printError('Invalid rank ('.. rank ..') passed to GetPlayerXPToRank method')
@@ -205,21 +193,75 @@ function Xperience:GetPlayerXPToRank(playerId, rank)
     return goalXP - currentXP
 end
 
-function Xperience:GetPlayerLicense(src)
-    local license = false
-
+function Xperience:GetPlayer(src)
     for _, id in pairs(GetPlayerIdentifiers(src)) do
         if string.sub(id, 1, string.len('license:')) == 'license:' then
             if Config.UseESX then
-                license = id
+                return id
             else
-                license = string.sub(id, 9, string.len(id))
+                return string.sub(id, 9, string.len(id))
             end
-            break
         end
     end 
     
-    return license
+    return false
+end
+
+function Xperience:CheckRanks()
+    local Limit = #Config.Ranks
+    local InValid = {}
+
+    for i = 1, Limit do
+        local RankXP = Config.Ranks[i].XP
+
+        if not isInt(RankXP) then
+            table.insert(InValid, string.format('Rank %s: %s', i,  RankXP))
+            printError(string.format('Invalid XP (%s) for Rank %s', RankXP, i))
+        end
+        
+    end
+
+    return InValid
+end
+
+function Xperience:RunCommand(src, type, args)
+    local playerId = tonumber(args[1])
+    local value = tonumber(args[2])
+    
+    if playerId ~= nil and value ~= nil then
+        local player = self:GetPlayer(playerId)
+    
+        if not player then
+            return self:PrintError(src, 'Player is offline')
+        end
+    
+        TriggerClientEvent('xperience:client:' .. type, playerId, value)
+    end
+
+    if Config.Debug then
+        if src ~= 0 then
+            print(string.format("^5PLAYER %s EXECUTED COMMAND %s^7", GetPlayerName(src), type))
+        end
+    end
+end
+
+function Xperience:Restart()
+    CreateThread(function()
+        for i, src in pairs(GetPlayers()) do
+            self:Load(src)
+        end
+    end)
+end
+
+function Xperience:PrintError(src, message)
+    if src > 0 then
+        TriggerClientEvent('chat:addMessage', src, {
+            color = { 255, 0, 0 },
+            args = { "xperience", "Player is offline!" }
+        })
+    else
+        print(string.format("^1%s^7", message))
+    end
 end
 
 CreateThread(function() Xperience:Init() end)
@@ -237,7 +279,29 @@ RegisterNetEvent('xperience:server:save', function(xp, rank) Xperience:Save(sour
 --                    EXPORTS                     --
 ----------------------------------------------------
 
-exports('GetPlayerXP', function(playerID) return Xperience:GetPlayerXP(playerID) end)
-exports('GetPlayerRank', function(playerID) return Xperience:GetPlayerRank(playerID) end)
-exports('GetPlayerXPToRank', function(playerID, rank) return Xperience:GetPlayerXPToRank(playerID, rank) end)
-exports('GetPlayerXPToNextRank', function(playerID) return Xperience:GetPlayerXPToNextRank(playerID) end)
+exports('GetPlayerXP', function(playerId) return Xperience:GetPlayerXP(playerId) end)
+exports('GetPlayerRank', function(playerId) return Xperience:GetPlayerRank(playerId) end)
+exports('GetPlayerXPToRank', function(playerId, rank) return Xperience:GetPlayerXPToRank(playerId, rank) end)
+exports('GetPlayerXPToNextRank', function(playerId) return Xperience:GetPlayerXPToNextRank(playerId) end)
+
+
+----------------------------------------------------
+--                   COMMANDS                     --
+----------------------------------------------------
+
+-- Requires ace permissions: e.g. add_ace group.admin command.addXP allow
+
+-- Allows for restarting the resource
+RegisterCommand('restartXP', function(source, args) Xperience:Restart() end, true)
+
+-- Award XP to player
+RegisterCommand('addXP', function(source, args) Xperience:RunCommand(source, 'addXP', args) end, true)
+
+-- Deduct XP from player
+RegisterCommand('removeXP', function(source, args) Xperience:RunCommand(source, 'removeXP', args) end, true)
+
+-- Set a player's XP
+RegisterCommand('setXP', function(source, args) Xperience:RunCommand(source, 'setXP', args) end, true)
+
+-- Set a player's rank
+RegisterCommand('setRank', function(source, args) Xperience:RunCommand(source, 'setRank', args) end, true)

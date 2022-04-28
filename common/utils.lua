@@ -53,4 +53,9 @@ function printError(message)
     print('^1' .. s)
     print(out)
     print('^1' .. s .. '^7')  
+
+    TriggerEvent('chat:addMessage', {
+        color = { 255, 0, 0 },
+        args = { "xperience", message }
+    })
 end

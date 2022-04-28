@@ -6,6 +6,8 @@ Config.Ranks = {
             -- rankUp: boolean      - whether the player reached or dropped to this rank
             -- prevRank: number     - the player's previous rank
             -- player: integer      - The current player
+
+            print(rankUp, prevRank, player)
         end
     },
     [3] = { XP = 2100 },

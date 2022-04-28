@@ -20,6 +20,26 @@ function Xperience:Init(data)
     end)
     RegisterCommand('-xperience', function() end)
     RegisterKeyMapping('+xperience', 'Show Rank Bar', 'keyboard', Config.UIKey)
+
+    TriggerEvent('chat:addSuggestion', '/addXP', 'Give XP to player', {
+        { name = "playerId",    help = 'The player\'s ID' },
+        { name = "xp",          help = 'The XP value to award' }
+    })
+
+    TriggerEvent('chat:addSuggestion', '/removeXP', 'Deduct XP from player', {
+        { name = "playerId",    help = 'The player\'s ID' },
+        { name = "xp",          help = 'The XP value to deduct' }
+    })
+
+    TriggerEvent('chat:addSuggestion', '/setXP', 'Set a player\'s current XP', {
+        { name = "playerId",    help = 'The player\'s ID' },
+        { name = "xp",          help = 'The XP value to set' }
+    })   
+    
+    TriggerEvent('chat:addSuggestion', '/setRank', 'Set a player\'s current rank', {
+        { name = "playerId",    help = 'The player\'s ID' },
+        { name = "rank",        help = 'The rank value to set' }
+    })      
 end
 
 
@@ -29,17 +49,20 @@ end
 
 function Xperience:OnRankChange(data, cb)
     local player = PlayerPedId()
+    local current = tonumber(data.current)
+    local previous = tonumber(data.previous)
 
     if data.rankUp then
-        TriggerEvent("experience:client:rankUp", data.current, data.previous, player)
+        TriggerEvent("experience:client:rankUp", current, previous, player)
+        TriggerServerEvent("experience:server:rankUp", current, previous)
     else
-        TriggerEvent("experience:client:rankDown", data.current, data.previous, player)      
+        TriggerEvent("experience:client:rankDown", current, previous, player)
+        TriggerServerEvent("experience:server:rankDown", current, previous)   
     end
         
-    local Rank = Config.Ranks[data.current]
-    
+    local Rank = Config.Ranks[current]
     if Rank.Action ~= nil and type(Rank.Action) == "function" then
-        Rank.Action(data.rankUp, data.previous, player)
+        Rank.Action(data.rankUp, previous, player)
     end
     
     cb('ok')
@@ -74,23 +97,23 @@ function Xperience:InitialiseUI()
     local ranks = self:GetRanksForUI()
 
     SendNUIMessage({
-        xperience_init = true,
-        xperience_xp = self:GetXP(),
-        xperience_ranks = ranks,
-        xperience_width = Config.Width,
-        xperience_timeout = Config.Timeout,
-        xperience_segments = Config.BarSegments,         
+        init = true,
+        xp = self:GetXP(),
+        ranks = ranks,
+        width = Config.Width,
+        timeout = Config.Timeout,
+        segments = Config.BarSegments,         
     })
 end
 
 function Xperience:OpenUI()
     self.UIOpen = true
-    SendNUIMessage({ xperience_show = true })
+    SendNUIMessage({ show = true })
 end
 
 function Xperience:CloseUI()
     self.UIOpen = false
-    SendNUIMessage({ xperience_hide = true })
+    SendNUIMessage({ hide = true })
 end
 
 function Xperience:ToggleUI()
@@ -113,8 +136,8 @@ function Xperience:AddXP(xp)
     self:SetData(xp)
 
     SendNUIMessage({
-        xperience_add = true,
-        xperience_xp = xp      
+        add = true,
+        xp = xp      
     })
 end
 
@@ -128,8 +151,8 @@ function Xperience:RemoveXP(xp)
     self:SetData(newXP)
 
     SendNUIMessage({
-        xperience_remove = true,
-        xperience_xp = xp      
+        remove = true,
+        xp = xp      
     })
 end
 
@@ -141,15 +164,15 @@ function Xperience:SetXP(xp)
     self:SetData(xp)
     
     SendNUIMessage({
-        xperience_set = true,
-        xperience_xp = xp      
+        set = true,
+        xp = xp      
     })
 end
 
 function Xperience:SetRank(rank)
     rank = tonumber(rank)
 
-    if not rank then
+    if not rank or not Config.Ranks[rank] then
         printError('Invalid rank (' .. tostring(rank) .. ') passed to SetRank method')
         return
     end
@@ -186,13 +209,17 @@ end
 function Xperience:GetXPToNextRank()
     local currentRank = self:GetRank()
 
+    if currentRank == #Config.Ranks then
+        return 0
+    end
+
     return Config.Ranks[currentRank + 1].XP - tonumber(self.CurrentXP)   
 end
 
 function Xperience:GetXPToRank(rank)
     local GoalRank = tonumber(rank)
     -- Check for valid rank
-    if not GoalRank or (GoalRank < 1 or GoalRank > #Config.Ranks) then
+    if not Config.Ranks[rank] or not GoalRank or (GoalRank < 1 or GoalRank > #Config.Ranks) then
         printError('Invalid rank ('.. GoalRank ..') passed to GetXPToRank method')
         return
     end
@@ -251,14 +278,6 @@ function Xperience:LimitXP(xp)
     return xp
 end
 
-function Xperience:PrintError(message)
-    local out = string.format('^1%s Error: ^7%s', GetCurrentResourceName(), message)
-    local s = string.rep("=", string.len(out))
-    print('^1' .. s)
-    print(out)
-    print('^1' .. s)  
-end
-
 
 ----------------------------------------------------
 --                 EVENT HANDLERS                 --
@@ -272,10 +291,10 @@ RegisterNetEvent('xperience:client:removeXP', function(...) Xperience:RemoveXP(.
 RegisterNetEvent('xperience:client:setXP', function(...) Xperience:SetXP(...) end)
 RegisterNetEvent('xperience:client:setRank', function(...) Xperience:SetRank(...) end)
 
-RegisterNUICallback('xperience_rankchange', function(...) Xperience:OnRankChange(...) end)
-RegisterNUICallback('xperience_ui_initialised', function(...) Xperience:OnUIInitialised(...) end)
-RegisterNUICallback('xperience_ui_closed', function(...) Xperience:OnUIClosed(...) end)
-RegisterNUICallback('xperience_save', function(...) Xperience:OnSave(...) end)
+RegisterNUICallback('rankchange', function(...) Xperience:OnRankChange(...) end)
+RegisterNUICallback('ui_initialised', function(...) Xperience:OnUIInitialised(...) end)
+RegisterNUICallback('ui_closed', function(...) Xperience:OnUIClosed(...) end)
+RegisterNUICallback('save', function(...) Xperience:OnSave(...) end)
 
 
 ----------------------------------------------------

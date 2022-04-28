@@ -6,7 +6,7 @@ description 'Xperience - XP Ranking System for FiveM'
 
 author 'Mobius1'
 
-version '0.1.1'
+version '0.2.0'
 
 shared_scripts {
     'config.lua',
