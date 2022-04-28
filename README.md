@@ -19,15 +19,22 @@ XP Ranking System for FiveM
 ![Demo Image 2](https://i.imgur.com/uNPRGo5.gif)
 
 ## Table of Contents
-- [Install](#install)
-- [Transitioning from esx_xp](#transitioning-from-esx-xp)
-- [Usage](#usage)
-    * [Client Side](#client-side)
-    * [Server Side](#server-side)
-- [Rank Events](#rank-events)
-- [Rank Actions](#rank-actions)
-- [QBCore Integration](#qbcore-integration)
-- [FAQ](#faq)
+* [Install](#install)
+* [Transitioning from esx_xp](#transitioning-from-esx-xp)
+* [Usage](#usage)
+* [Client Side](#client-side)
+  - [Client Exports](#client-exports)
+  - [Client Events](#client-events)
+* [Server Side](#server-side)
+  - [Server Exports](#server-exports)
+  - [Server Triggers](#server-triggers)
+  - [Server Events](#server-events)
+* [Rank Actions](#rank-actions)
+* [QBCore Integration](#qbcore-integration)
+  - [Client](#client)
+  - [Server](#server)
+* [FAQ](#faq)
+* [License](#license)
 
 
 ## Install
@@ -51,7 +58,7 @@ If you previously used `esx_xp` then do the following to make your current store
 
 ### Client Side
 
-#### Exports
+#### Client Exports
 Give XP to player
 ```lua
 exports.xperience:AddXP(xp --[[ integer ]])
@@ -92,9 +99,25 @@ Get XP required to reach defined rank
 exports.xperience:GetXPToRank(rank --[[ integer ]])
 ```
 
+#### Client Events
+
+Listen for rank up event on the client
+```lua
+AddEventHandler("xperience:client:rankUp", function(newRank, previousRank, player)
+    -- do something when player ranks up
+end)
+```
+
+Listen for rank down event on the client
+```lua
+AddEventHandler("xperience:client:rankDown", function(newRank, previousRank, player)
+    -- do something when player ranks down
+end)
+```
+
 ### Server Side
 
-#### Exports
+#### Server Exports
 Get player's XP
 ```lua
 exports.xperience:GetPlayerXP(playerId --[[ integer ]])
@@ -115,7 +138,7 @@ Get player's required XP to reach defined rank
 exports.xperience:GetPlayerXPToRank(playerId --[[ integer ]], rank --[[ integer ]])
 ```
 
-#### Events
+#### Server Triggers
 ```lua
 TriggerClientEvent('xperience:client:addXP', playerId --[[ integer ]], xp --[[ integer ]])
 
@@ -126,18 +149,13 @@ TriggerClientEvent('xperience:client:setXP', playerId --[[ integer ]], xp --[[ i
 TriggerClientEvent('xperience:client:setRank', playerId --[[ integer ]], rank --[[ integer ]])
 ```
 
-## Rank Events
-
-Listen for rank up event
+#### Server Events
 ```lua
-AddEventHandler("experience:client:rankUp", function(newRank, previousRank, player)
+RegisterNetEvent('xperience:server:rankUp', function(newRank, previousRank)
     -- do something when player ranks up
 end)
-```
 
-Listen for rank down event
-```lua
-AddEventHandler("experience:client:rankDown", function(newRank, previousRank, player)
+RegisterNetEvent('xperience:server:rankDown', function(newRank, previousRank)
     -- do something when player ranks down
 end)
 ```
@@ -211,13 +229,13 @@ end)
 
 ### How do I do something when a player's rank changes?
 
-You can either utilise [Rank Events](#rank-events) or [Rank Actions](#rank-actions).
+You can either utilise [Rank Events](#client-events) or [Rank Actions](#rank-actions).
 
 Example of giving a minigun with `500` bullets to a player for reaching rank `10`:
 
 #### Rank Event
 ```lua
-AddEventHandler("experience:client:rankUp", function(newRank, previousRank, player)
+AddEventHandler("xperience:client:rankUp", function(newRank, previousRank, player)
     if newRank == 10 then
         local weapon = `WEAPON_MINIGUN`
         
