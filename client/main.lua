@@ -53,11 +53,11 @@ function Xperience:OnRankChange(data, cb)
     local previous = tonumber(data.previous)
 
     if data.rankUp then
-        TriggerEvent("experience:client:rankUp", current, previous, player)
-        TriggerServerEvent("experience:server:rankUp", current, previous)
+        TriggerEvent("xperience:client:rankUp", current, previous, player)
+        TriggerServerEvent("xperience:server:rankUp", current, previous)
     else
-        TriggerEvent("experience:client:rankDown", current, previous, player)
-        TriggerServerEvent("experience:server:rankDown", current, previous)   
+        TriggerEvent("xperience:client:rankDown", current, previous, player)
+        TriggerServerEvent("xperience:server:rankDown", current, previous)   
     end
         
     local Rank = Config.Ranks[current]
