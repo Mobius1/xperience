@@ -20,7 +20,7 @@ XP Ranking System for FiveM
 
 ## Table of Contents
 * [Install](#install)
-* [Transitioning from esx_xp](#transitioning-from-esx-xp)
+* [Transitioning from esx_xp](#transitioning-from-esx_xp)
 * [Usage](#usage)
 * [Client Side](#client-side)
   - [Client Exports](#client-exports)
