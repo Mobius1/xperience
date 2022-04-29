@@ -222,6 +222,25 @@ These require ace permissions: e.g. `add_ace group.admin command.addXP allow`
 ```
 
 # FAQ
+
+### How do I award players XP for X amount of playtime?
+
+Example of awarding players 100XP for every 30mins of playtime
+```lua
+CreateThread(function()
+    local interval = 30   -- interval in minutes
+    local xp = 100        -- XP amount to award every interval
+
+    while true do
+        for i, src in pairs(GetPlayers()) do
+            TriggerClientEvent('xperience:client:addXP', src, xp)
+        end
+        
+        Wait(interval * 60 * 1000)
+    end
+end)
+```
+
 ### How do I give XP to a player when they've done something?
 
 Example of giving a player 100 XP for shooting another player
