@@ -40,9 +40,13 @@ XP Ranking System for FiveM
 
 ## Install
 
-* If you want to use `xperience` as a standalone resource then import `xperience_standalone.sql` only
-* If using `ESX` with `Config.UseESX` set to `true` then import `xperience_esx.sql` only. This adds the `xp` and `rank` columns to the `users` table
-* If using `QBCore` with `Config.UseQBCore` set to `true` then there's no need to import any `sql` files as the xp and rank are saved to the player's metadata - see [QBCore Integration](#qbcore-integration)
+Select an option:
+* Option 1 - If you want to use `xperience` as a standalone resource then import `xperience_standalone.sql` only
+* Option 2 - If using `ESX` with `Config.UseESX` set to `true` then import `xperience_esx.sql` only. This adds the `xp` and `rank` columns to the `users` table
+* Option 3 - If using `QBCore` with `Config.UseQBCore` set to `true` then there's no need to import any `sql` files as the xp and rank are saved to the player's metadata - see [QBCore Integration](#qbcore-integration)
+
+then:
+
 * Drop the `xperience` directory into you `resources` directory
 * Add `ensure xperience` to your `server.cfg` file
 
