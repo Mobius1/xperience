@@ -227,6 +227,7 @@ These require ace permissions: e.g. `add_ace group.admin command.addXP allow`
 
 Example of awarding players 100XP for every 30mins of playtime
 ```lua
+-- Server side
 CreateThread(function()
     local interval = 30   -- interval in minutes
     local xp = 100        -- XP amount to award every interval
