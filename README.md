@@ -33,6 +33,7 @@ XP Ranking System for FiveM
 * [QBCore Integration](#qbcore-integration)
   - [Client](#client)
   - [Server](#server)
+* [Admin Commands](#admin-commands)
 * [FAQ](#faq)
 * [License](#license)
 
@@ -200,6 +201,24 @@ local rank = PlayerData.metadata.rank
 local Player = QBCore.Functions.GetPlayer(src)
 local xp = Player.PlayerData.metadata.xp
 local rank = Player.PlayerData.metadata.rank
+```
+
+# Admin Commands
+
+These require ace permissions: e.g. `add_ace group.admin command.addXP allow`
+
+```lua
+-- Award XP to player
+/addXP [playerId] [xp]
+
+-- Deduct XP from player
+/removeXP [playerId] [xp]
+
+-- Set a player's XP
+/setXP [playerId] [xp]
+
+-- Set a player's rank
+/setRank [playerId] [rank]
 ```
 
 # FAQ
