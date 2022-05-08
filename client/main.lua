@@ -95,17 +95,29 @@ end
 
 function Xperience:InitialiseUI()
     local ranks = self:GetRanksForUI()
+    local savedTheme = GetResourceKvpString('xp_theme')
+    local theme = {
+        theme = Config.Theme,
+        segments = Config.Themes[Config.Theme].segments,
+        width = Config.Themes[Config.Theme].width,
+    }
 
+    if savedTheme and Config.Themes[savedTheme] ~= nil then
+        theme = {
+            theme = savedTheme,
+            segments = Config.Themes[savedTheme].segments,
+            width = Config.Themes[savedTheme].width,
+        }
+    else
+        SetResourceKvp('xp_theme', Config.Theme)
+    end
+    
     SendNUIMessage({
         init = true,
         xp = self:GetXP(),
         ranks = ranks,
         timeout = Config.Timeout,      
-        theme = {
-            theme = Config.Theme,
-            segments = Config.Themes[Config.Theme].segments,
-            width = Config.Themes[Config.Theme].width,
-        },         
+        theme = theme,         
     })
 end
 
@@ -267,6 +279,8 @@ function Xperience:SetTheme(theme)
             args = { "xperience", 'Invalid theme name' }
         })
     end
+
+    SetResourceKvp('xp_theme', theme)
 
     -- Send the theme data to the NUI
     SendNUIMessage({

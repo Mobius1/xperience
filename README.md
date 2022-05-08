@@ -236,7 +236,7 @@ These require ace permissions: e.g. `add_ace group.admin command.addXP allow`
 ```
 
 # Themes
-The theme can be set by the player using the `/setXPTheme [theme]` command. The `theme` argument must exist in the `Config.Themes` in `config.lua` for it to work:
+The theme can be set by the player using the `/setXPTheme [theme]` command. The `theme` argument must exist in the `Config.Themes` table in `config.lua` for it to work:
 
 ```lua
 Config.Theme  = 'native'  -- Set the default theme (must exist in the Config.Themes table)
