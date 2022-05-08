@@ -254,16 +254,33 @@ function Xperience:GetMaxRank()
 end
 
 function Xperience:SetTheme(theme)
-    if Config.Themes[theme] ~= nil then
-        SendNUIMessage({
-            event = 'theme',
-            theme = {
-                theme = theme,
-                segments = Config.Themes[theme].segments,
-                width = Config.Themes[theme].width,
-            }, 
+    if theme == nil then
+        return TriggerEvent('chat:addMessage', {
+            color = { 255, 0, 0 },
+            args = { "xperience", 'A theme name is required' }
         })
-    end    
+    end
+
+    if Config.Themes[theme] == nil then
+        return TriggerEvent('chat:addMessage', {
+            color = { 255, 0, 0 },
+            args = { "xperience", 'Invalid theme name' }
+        })
+    end
+
+    SendNUIMessage({
+        event = 'theme',
+        theme = {
+            theme = theme,
+            segments = Config.Themes[theme].segments,
+            width = Config.Themes[theme].width,
+        }, 
+    })
+    
+    TriggerEvent('chat:addMessage', {
+        color = { 255, 255, 255 },
+        args = { "xperience", 'Theme set to: ' .. theme }
+    })
 end
 
 
@@ -306,13 +323,13 @@ RegisterNetEvent('xperience:client:addXP', function(...) Xperience:AddXP(...) en
 RegisterNetEvent('xperience:client:removeXP', function(...) Xperience:RemoveXP(...) end)
 RegisterNetEvent('xperience:client:setXP', function(...) Xperience:SetXP(...) end)
 RegisterNetEvent('xperience:client:setRank', function(...) Xperience:SetRank(...) end)
-RegisterNetEvent('xperience:client:setTheme', function(theme) Xperience:SetTheme(theme) end)
-
 
 RegisterNUICallback('rankchange', function(...) Xperience:OnRankChange(...) end)
 RegisterNUICallback('ui_initialised', function(...) Xperience:OnUIInitialised(...) end)
 RegisterNUICallback('ui_closed', function(...) Xperience:OnUIClosed(...) end)
 RegisterNUICallback('save', function(...) Xperience:OnSave(...) end)
+
+RegisterCommand('setXPTheme', function(source, args) Xperience:SetTheme(args[1]) end)
 
 
 ----------------------------------------------------
@@ -330,3 +347,4 @@ exports('GetXPToRank', function(...) return Xperience:GetXPToRank(...) end)
 exports('GetXPToNextRank', function(...) return Xperience:GetXPToNextRank(...) end)
 exports('GetRank', function(...) return Xperience:GetRank(...) end)
 exports('GetMaxRank', function(...) return Xperience:GetMaxRank(...) end)
+exports('SetTheme', function(...) return Xperience:SetTheme(...) end)

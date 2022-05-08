@@ -227,28 +227,17 @@ function Xperience:CheckRanks()
 end
 
 function Xperience:RunCommand(src, type, args)
-    if type == 'setXPTheme' then
-        local theme = args[1]
-
-        if Config.Themes[theme] ~= nil then
-            TriggerClientEvent('xperience:client:setTheme', src, theme)
-            self:Notify(src, 'Theme set to: ' .. theme, 'success')
-        else
-            return self:PrintError(src, string.format('Theme (%s) does not exist!', theme))
+    local playerId = tonumber(args[1])
+    local value = tonumber(args[2])
+    
+    if playerId ~= nil and value ~= nil then
+        local player = self:GetPlayer(playerId)
+    
+        if not player then
+            return self:PrintError(src, 'Player is offline')
         end
-    else
-        local playerId = tonumber(args[1])
-        local value = tonumber(args[2])
-        
-        if playerId ~= nil and value ~= nil then
-            local player = self:GetPlayer(playerId)
-        
-            if not player then
-                return self:PrintError(src, 'Player is offline')
-            end
-        
-            TriggerClientEvent('xperience:client:' .. type, playerId, value)
-        end
+    
+        TriggerClientEvent('xperience:client:' .. type, playerId, value)
     end
 
     if Config.Debug then
@@ -328,6 +317,3 @@ RegisterCommand('setXP', function(source, args) Xperience:RunCommand(source, 'se
 
 -- Set a player's rank
 RegisterCommand('setRank', function(source, args) Xperience:RunCommand(source, 'setRank', args) end, true)
-
--- Set theme
-RegisterCommand('setXPTheme', function(source, args) Xperience:RunCommand(source, 'setXPTheme', args) end, true)
