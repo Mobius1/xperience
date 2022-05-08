@@ -9,13 +9,12 @@ body {
 
 #main {
     opacity: 0;
-    -webkit-transition: opacity 1000ms;
     transition: opacity 1000ms;
 }
 
-#main.active, #main.active.show-leaderboard  #xperience_leaderboard {
+#main.active,
+#main.active.show-leaderboard #xperience_leaderboard {
     opacity: 1;
-    -webkit-transition: opacity 250ms;
     transition: opacity 250ms;
 }
 
@@ -24,38 +23,29 @@ body {
     width: 100vw;
     position: absolute;
     top: 16px;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-align: center;
     align-items: center;
-    -webkit-box-pack: center;
     justify-content: center;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
     flex-direction: column;
 }
 
-.xperience .xperience-inner {
+.xperience-inner {
     width: 532px;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-align: center;
     align-items: center;
-    -webkit-box-pack: justify;
     justify-content: space-between;
 }
 
-.xperience .xperience-inner .xperience-progress {
+.xperience-progress {
     width: calc(100% - 130px);
     height: 7px;
     position: relative;
-    display: -webkit-box;
     display: flex;
     justify-content: space-around;
     margin-top: 1px;
 }
 
-.xperience .xperience-inner .xperience-progress .xperience-segment {
+.xperience-segment {
     height: 100%;
     background-color: #1c2b43;
     margin-right: 4px;
@@ -63,18 +53,18 @@ body {
     position: relative;
 }
 
-.xperience .xperience-inner .xperience-progress .xperience-segment:last-child {
+.xperience-segment:last-child {
     margin-right: 0;
 }
 
-.xperience .xperience-inner .xperience-progress .xperience-segment .xperience-indicator--bar {
+.xperience-segment .xperience-indicator--bar {
     position: absolute;
     height: 100%;
     width: 0%;
     background-color: white;
 }
 
-.xperience .xperience-inner .xperience-progress .xperience-segment .xperience-progress--bar {
+.xperience-segment .xperience-progress--bar {
     position: absolute;
     z-index: 1;
     height: 100%;
@@ -82,52 +72,46 @@ body {
     background-color: #2e6eb8;
 }
 
-.xperience .xperience-inner .xperience-progress.xperience-remove .xperience-progress--bar {
-    background-color: #D50000;
+.xperience-remove .xperience-progress--bar {
+    background-color: #d50000;
 }
 
-.xperience .xperience-inner .xperience-progress.xperience-remove .xperience-indicator--bar {
-    background-color: #FF8A80;
+.xperience-remove .xperience-indicator--bar {
+    background-color: #ff8a80;
 }
 
-.xperience .xperience-inner .xperience-rank {
+.theme-native .xperience-rank {
     width: 43px;
     height: 43px;
     border-radius: 50%;
     background-color: #000;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-align: center;
     align-items: center;
-    -webkit-box-pack: center;
     justify-content: center;
     color: #fff;
     position: relative;
 }
 
-.xperience .xperience-inner .xperience-rank::before {
+.theme-native .xperience-rank::before {
     position: absolute;
     width: 49px;
     height: 49px;
     border-radius: 50%;
     background-color: #000;
-    display: -webkit-box;
     display: flex;
-    -webkit-box-align: center;
     align-items: center;
-    -webkit-box-pack: center;
     justify-content: center;
     color: #fff;
     content: "";
 }
 
-.xperience .xperience-inner .xperience-rank div {
+.xperience-rank div {
     position: absolute;
     font-size: 40px;
     z-index: 10;
 }
 
-.xperience .xperience-inner .xperience-rank svg {
+.xperience-rank svg {
     position: absolute;
     top: 0;
     left: 0;
@@ -138,241 +122,98 @@ body {
     stroke-width: 80;
 }
 
-.xperience .xperience-inner .xperience-rank.spin div {
-    -webkit-animation: spin 250ms linear 0ms forwards;
+.xperience-rank.spin div {
     animation: spin 250ms linear 0ms forwards;
 }
 
-.xperience .xperience-inner .xperience-rank.pulse {
+.xperience-rank.pulse {
     background-color: transparent;
-    -webkit-animation: pulse 250ms linear 0ms forwards;
     animation: pulse 250ms linear 0ms forwards;
 }
 
-.xperience .xperience-inner .xperience-rank.pulse::before {
+.xperience-rank.pulse::before {
     background-color: transparent;
 }
 
-.xperience .xperience-inner .xperience-rank.pulse div {
+.xperience-rank.pulse div {
     color: #2e6eb8;
 }
 
-.xperience .xperience-inner .xperience-rank.pulse svg {
+.xperience-rank.pulse svg {
     fill: none;
     stroke: #fff;
 }
 
-.xperience .xperience-inner .xperience-rank.highlight {
+.xperience-rank.highlight {
     background-color: transparent;
 }
 
-.xperience .xperience-inner .xperience-rank.highlight::before {
+.xperience-rank.highlight::before {
     background-color: transparent;
 }
 
-.xperience .xperience-inner .xperience-rank.highlight div {
+.xperience-rank.highlight div {
     color: #2e6eb8;
 }
 
-.xperience .xperience-inner .xperience-rank.highlight svg {
+.xperience-rank.highlight svg {
     fill: none;
     stroke: #fff;
 }
 
-.xperience .xperience-data {
+.xperience-data {
     width: 532px;
     font-size: 28px;
     color: #fff;
-    display: -webkit-box;
     display: flex;
     justify-content: space-around;
     position: absolute;
     top: 31px;
 }
 
-.xperience .xperience-data span {
+.xperience-data span {
     width: 48%;
     display: inline-block;
     position: relative;
-    text-shadow: -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000, 1px 1px 2px #000;
+    text-shadow: -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000,
+        1px 1px 2px #000;
 }
 
-.xperience .xperience-data span:first-child {
+.xperience-data span:first-child {
     text-align: right;
     padding-right: 2px;
 }
 
-.xperience .xperience-data span:first-child::after {
+.xperience-data span:first-child::after {
     position: absolute;
     right: -8px;
     content: "/";
 }
 
-.xperience .xperience-data span:last-child {
+.xperience-data span:last-child {
     padding-left: 2px;
 }
 
-@-webkit-keyframes spin {
-    from {
-        -webkit-transform: rotateY(180deg);
-        transform: rotateY(180deg);
-    }
-
-    to {
-        -webkit-transform: rotateY(360deg);
-        transform: rotateY(360deg);
-    }
+.xperience:not(.theme-native) .xperience-rank svg {
+    display: none;
 }
 
 @keyframes spin {
     from {
-        -webkit-transform: rotateY(180deg);
         transform: rotateY(180deg);
     }
 
     to {
-        -webkit-transform: rotateY(360deg);
         transform: rotateY(360deg);
-    }
-}
-
-@-webkit-keyframes pulse {
-    0% {
-        -webkit-transform: scale(1.25);
-        transform: scale(1.25);
-    }
-
-    100% {
-        -webkit-transform: scale(1);
-        transform: scale(1);
     }
 }
 
 @keyframes pulse {
     0% {
-        -webkit-transform: scale(1.25);
         transform: scale(1.25);
     }
 
     100% {
-        -webkit-transform: scale(1);
         transform: scale(1);
     }
-}
-
-/* LEADERBOARD */
-#xperience_leaderboard {
-    position: absolute;
-    left: 50px;
-    top: 25px;
-    width: 20%;
-    font-family: "ChaletComprime";
-    color: #fff;
-    font-size: 25px;
-    opacity: 0;
-    -webkit-transition: opacity 1000ms;
-    transition: opacity 1000ms;
-}
-
-.xperience-leaderboard--header {
-    background-color: rgba(0, 0, 0, 0.4);
-    padding: 5px 10px;
-    display: flex;
-    justify-content: space-between;	    
-}
-
-.xperience-leaderboard--players {
-    padding: 0;
-    margin: 0;
-    background-color: rgba(35, 132, 255, 0.4);
-}
-
-.xperience-leaderboard--players .xperience-leaderboard--player {
-    list-style: none;
-    padding: 5px 10px;
-    height: 30px;
-    display: -webkit-box;
-    display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    justify-content: center;
-    position: relative;
-}
-
-.xperience-leaderboard--players .xperience-leaderboard--player::before {
-    position: absolute;
-    left: 0;
-    width: 5px;
-    height: 100%;
-    background-color: rgba(35, 132, 255, 0.4);
-    content: "";
-}
-
-.xperience-leaderboard--players .xperience-leaderboard--player.hidden {
-    display: none;
-}
-
-.xperience-leaderboard--players .xperience-leaderboard--playerinfo {
-    width: 100%;
-    display: -webkit-box;
-    display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: justify;
-    justify-content: space-between;
-}
-
-.xperience-leaderboard--players .xperience-leaderboard--playerping {
-    font-size: 20px;
-    margin: 0 10px;
-}
-
-.xperience-leaderboard--players .xperience-leaderboard--playerrank {
-    display: -webkit-box;
-    display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: end;
-    justify-content: end;
-    width: 30px;
-    height: 30px;
-    position: relative;
-}
-
-.xperience-leaderboard--players .xperience-leaderboard--playerrank::before {
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background-color: #000;
-    z-index: 1;
-    content: "";
-}
-
-.xperience-leaderboard--players .xperience-leaderboard--playerrank svg {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    stroke: #2e6eb8;
-    fill: none;
-    stroke-width: 80;
-    z-index: 2;
-}
-
-.xperience-leaderboard--players .xperience-leaderboard--playerrank .xperience-leaderboard--playerranknum {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    display: -webkit-box;
-    display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    justify-content: center;
-    font-family: "ChaletComprime";
-    font-size: 30px;
-    z-index: 2;
 }

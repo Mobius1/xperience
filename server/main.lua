@@ -41,6 +41,8 @@ function Xperience:Init()
 end
 
 function Xperience:Load(src)
+    src = tonumber(src)
+
     if self.ready then
         local resp, result = false, false
 
@@ -225,17 +227,28 @@ function Xperience:CheckRanks()
 end
 
 function Xperience:RunCommand(src, type, args)
-    local playerId = tonumber(args[1])
-    local value = tonumber(args[2])
-    
-    if playerId ~= nil and value ~= nil then
-        local player = self:GetPlayer(playerId)
-    
-        if not player then
-            return self:PrintError(src, 'Player is offline')
+    if type == 'setXPTheme' then
+        local theme = args[1]
+
+        if Config.Themes[theme] ~= nil then
+            TriggerClientEvent('xperience:client:setTheme', src, theme)
+            self:Notify(src, 'Theme set to: ' .. theme, 'success')
+        else
+            return self:PrintError(src, string.format('Theme (%s) does not exist!', theme))
         end
-    
-        TriggerClientEvent('xperience:client:' .. type, playerId, value)
+    else
+        local playerId = tonumber(args[1])
+        local value = tonumber(args[2])
+        
+        if playerId ~= nil and value ~= nil then
+            local player = self:GetPlayer(playerId)
+        
+            if not player then
+                return self:PrintError(src, 'Player is offline')
+            end
+        
+            TriggerClientEvent('xperience:client:' .. type, playerId, value)
+        end
     end
 
     if Config.Debug then
@@ -243,6 +256,14 @@ function Xperience:RunCommand(src, type, args)
             print(string.format("^5PLAYER %s EXECUTED COMMAND %s^7", GetPlayerName(src), type))
         end
     end
+end
+
+function Xperience:Notify(src, message, type)
+    if Config.UseQBCore then
+        TriggerClientEvent('QBCore:Notify', src, message, type)
+    elseif Config.UseESX then
+        TriggerClientEvent('esx:showNotification', src, message)
+    end  
 end
 
 function Xperience:Restart()
@@ -257,8 +278,10 @@ function Xperience:PrintError(src, message)
     if src > 0 then
         TriggerClientEvent('chat:addMessage', src, {
             color = { 255, 0, 0 },
-            args = { "xperience", "Player is offline!" }
+            args = { "xperience", message }
         })
+
+        self:Notify(src, message, 'error')
     else
         print(string.format("^1%s^7", message))
     end
@@ -305,3 +328,6 @@ RegisterCommand('setXP', function(source, args) Xperience:RunCommand(source, 'se
 
 -- Set a player's rank
 RegisterCommand('setRank', function(source, args) Xperience:RunCommand(source, 'setRank', args) end, true)
+
+-- Set theme
+RegisterCommand('setXPTheme', function(source, args) Xperience:RunCommand(source, 'setXPTheme', args) end, true)

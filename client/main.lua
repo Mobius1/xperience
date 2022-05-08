@@ -100,20 +100,23 @@ function Xperience:InitialiseUI()
         init = true,
         xp = self:GetXP(),
         ranks = ranks,
-        width = Config.Width,
-        timeout = Config.Timeout,
-        segments = Config.BarSegments,         
+        timeout = Config.Timeout,      
+        theme = {
+            theme = Config.Theme,
+            segments = Config.Themes[Config.Theme].segments,
+            width = Config.Themes[Config.Theme].width,
+        },         
     })
 end
 
 function Xperience:OpenUI()
     self.UIOpen = true
-    SendNUIMessage({ show = true })
+    SendNUIMessage({ event = 'show' })
 end
 
 function Xperience:CloseUI()
     self.UIOpen = false
-    SendNUIMessage({ hide = true })
+    SendNUIMessage({ event = 'hide' })
 end
 
 function Xperience:ToggleUI()
@@ -136,7 +139,7 @@ function Xperience:AddXP(xp)
     self:SetData(xp)
 
     SendNUIMessage({
-        add = true,
+        event = 'add',
         xp = xp      
     })
 end
@@ -151,7 +154,7 @@ function Xperience:RemoveXP(xp)
     self:SetData(newXP)
 
     SendNUIMessage({
-        remove = true,
+        event = 'remove',
         xp = xp      
     })
 end
@@ -164,7 +167,7 @@ function Xperience:SetXP(xp)
     self:SetData(xp)
     
     SendNUIMessage({
-        set = true,
+        event = 'set',
         xp = xp      
     })
 end
@@ -250,6 +253,19 @@ function Xperience:GetMaxRank()
     return #Config.Ranks
 end
 
+function Xperience:SetTheme(theme)
+    if Config.Themes[theme] ~= nil then
+        SendNUIMessage({
+            event = 'theme',
+            theme = {
+                theme = theme,
+                segments = Config.Themes[theme].segments,
+                width = Config.Themes[theme].width,
+            }, 
+        })
+    end    
+end
+
 
 ----------------------------------------------------
 --                    UTILITIES                   --
@@ -290,6 +306,8 @@ RegisterNetEvent('xperience:client:addXP', function(...) Xperience:AddXP(...) en
 RegisterNetEvent('xperience:client:removeXP', function(...) Xperience:RemoveXP(...) end)
 RegisterNetEvent('xperience:client:setXP', function(...) Xperience:SetXP(...) end)
 RegisterNetEvent('xperience:client:setRank', function(...) Xperience:SetRank(...) end)
+RegisterNetEvent('xperience:client:setTheme', function(theme) Xperience:SetTheme(theme) end)
+
 
 RegisterNUICallback('rankchange', function(...) Xperience:OnRankChange(...) end)
 RegisterNUICallback('ui_initialised', function(...) Xperience:OnUIInitialised(...) end)

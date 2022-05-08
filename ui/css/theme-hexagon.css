@@ -1,0 +1,98 @@
+/* HEXAGON THEME */
+.theme-hexagon.xperience {
+    top: auto;
+    bottom: 16px;
+    align-items: flex-end;
+}
+
+.theme-hexagon .xperience-inner {
+    justify-content: flex-start;
+}
+
+.theme-hexagon .xperience-progress {
+    margin-left: -1px;
+    height: 25px;
+    margin-top: 24px;
+}
+
+.theme-hexagon .xperience-segment {
+    background-color: rgba(0, 0, 0, 0.4);
+    transform: skewX(-30deg);
+    margin-right: 2px;
+}
+
+.theme-hexagon .xperience-progress--bar {
+    background-color: rgba(100, 199, 204, 1);
+}
+
+.theme-hexagon .xperience-indicator--bar {
+    background-color: rgba(100, 199, 204, 0.4);
+}
+
+.theme-hexagon .xperience-rank div {
+    position: absolute;
+    font-size: 40px;
+    z-index: 10;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transform: rotate(-30deg);
+}
+
+.theme-hexagon .xperience-rank:first-child {
+    position: relative;
+    width: 50px;
+    height: 28.87px;
+    background-color: #64c7cc;
+    margin: 14.43px 0;
+    transform: rotate(30deg);
+    transform-style: preserve-3d;
+}
+
+.theme-hexagon .xperience-rank:first-child:before,
+.theme-hexagon .xperience-rank:first-child:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+}
+
+.theme-hexagon .xperience-rank:first-child:before {
+    bottom: 100%;
+    border-bottom: 14.43px solid #64c7cc;
+}
+
+.theme-hexagon .xperience-rank:first-child:after {
+    top: 100%;
+    width: 0;
+    border-top: 14.43px solid #64c7cc;
+}
+
+.theme-hexagon .xperience-rank:last-child {
+    display: none;
+}
+
+.theme-hexagon .xperience-data {
+    width: 270px;
+    font-size: 24px;
+    top: 2px;
+    z-index: 100;
+    margin-right: 20px;
+}
+
+.theme-hexagon .xperience-data span {
+    text-shadow: none;
+}
+
+.theme-hexagon .xperience-data span:first-child {
+    text-align: center;
+}
+
+.theme-hexagon .xperience-data span:first-child::after,
+.theme-hexagon .xperience-data span:last-child {
+    display: none;
+}
