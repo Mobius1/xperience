@@ -34,6 +34,8 @@ XP Ranking System for FiveM
   - [Client](#client)
   - [Server](#server)
 * [Admin Commands](#admin-commands)
+* [Themes](#themes)
+* [Custom Themes](#custom-themes)
 * [FAQ](#faq)
 * [License](#license)
 
@@ -209,6 +211,12 @@ local xp = Player.PlayerData.metadata.xp
 local rank = Player.PlayerData.metadata.rank
 ```
 
+# Commands
+```lua
+-- Set the theme
+/setXPTheme [theme]
+```
+
 # Admin Commands
 
 These require ace permissions: e.g. `add_ace group.admin command.addXP allow`
@@ -225,6 +233,81 @@ These require ace permissions: e.g. `add_ace group.admin command.addXP allow`
 
 -- Set a player's rank
 /setRank [playerId] [rank]
+```
+
+# Themes
+The theme can be set by the player using the `/setXPTheme [theme]` command. The `theme` argument must exist in the `Config.Themes` in `config.lua` for it to work:
+
+```lua
+Config.Theme  = 'native'  -- Set the default theme (must exist in the Config.Themes table)
+Config.Themes = {
+    native = {
+        segments = 10,  -- Sets the number of segments the XP bar has. Native = 10, Max = 20
+        width = 532     -- Sets the width of the XP bar in px
+    },
+
+    hitman = {
+        segments = 80,
+        width = 800
+    },
+    
+    hexagon = {
+        segments = 16,
+        width = 400
+    },
+}
+```
+
+# Custom Themes
+
+Let's say you want to add a theme called `myTheme`:
+
+* Add the theme table to the `Config.Themes` table using the name of the theme as the index:
+
+```lua
+Config.Themes = {
+    ...
+    
+    myTheme = {
+        segments = 20,
+        width = 650
+    }
+}
+```
+
+* Create the theme's `.css` file in `ui/css` directory with the `theme-` prefix:
+```
+ui/css/theme-myTheme.css
+```
+
+* Set `Config.Theme` to read your new theme:
+```lua
+Config.Theme = 'myTheme'
+```
+
+#### Markup for making themes:
+```html
+<div class="xperience">
+    <div class="xperience-inner">
+        <div class="xperience-rank">
+            <div>XXXX</div> <!-- CURRENT RANK -->
+        </div>
+        <div class="xperience-progress"> <!-- MAIN PROGRESS BAR -->
+            <div class="xperience-segment"> <!-- BAR SEGMENT (IF YOU'VE SET THE THEME'S SEGMENTS TO 10 THEN THERE'LL BE 10 OF THESE) -->
+                <div class="xperience-indicator--bar"></div> <!-- SEGMENT INDICATOR (ONLY USED WHEN XP IS UPDATING)-->
+                <div class="xperience-progress--bar"></div> <!-- SEGMENT PROGRESS -->
+            </div>
+            ...
+        </div>
+        <div class="xperience-rank">
+            <div>XXXX</div> <!-- NEXT RANK -->
+        </div>
+    </div>
+    <div class="xperience-data">
+        <span>XXXX</span> <!-- CURRENT XP -->
+        <span>XXXX</span> <!-- XP REQUIRED FOR NEXT RANK -->
+    </div>
+</div>
 ```
 
 # FAQ

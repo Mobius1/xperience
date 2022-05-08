@@ -268,6 +268,7 @@ function Xperience:SetTheme(theme)
         })
     end
 
+    -- Send the theme data to the NUI
     SendNUIMessage({
         event = 'theme',
         theme = {
@@ -277,6 +278,7 @@ function Xperience:SetTheme(theme)
         }, 
     })
     
+    -- Let the player know the theme was changed successfully
     TriggerEvent('chat:addMessage', {
         color = { 255, 255, 255 },
         args = { "xperience", 'Theme set to: ' .. theme }
