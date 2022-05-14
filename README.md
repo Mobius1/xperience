@@ -31,6 +31,7 @@ XP Ranking System for FiveM
   - [Server Events](#server-events)
 * [Rank Actions](#rank-actions)
 * [QBCore Integration](#qbcore-integration)
+* [ESX Integration](#esx-integration)
   - [Client](#client)
   - [Server](#server)
 * [Admin Commands](#admin-commands)
@@ -193,7 +194,7 @@ Config.Ranks = {
 }
 ```
 
-## QBCore Integration
+# QBCore Integration
 
 If `Config.UseQBCore` is set to `true` then the player's xp and rank are stored in their metadata. The metadata is saved whenever a player's xp / rank changes.
 
@@ -210,6 +211,16 @@ local Player = QBCore.Functions.GetPlayer(src)
 local xp = Player.PlayerData.metadata.xp
 local rank = Player.PlayerData.metadata.rank
 ```
+
+# ESX Integration
+
+#### Server
+```lua
+local xPlayer = ESX.GetPlayerById(src)
+local xp = xPlayer.get('xp')
+local rank = xPlayer.get('rank')
+```
+
 
 # Commands
 ```lua
@@ -240,6 +251,7 @@ The theme can be set by the player using the `/setXPTheme [theme]` command. The 
 
 ```lua
 Config.Theme  = 'native'  -- Set the default theme (must exist in the Config.Themes table)
+ 
 Config.Themes = {
     native = {
         segments = 10,  -- Sets the number of segments the XP bar has. Native = 10, Max = 20
