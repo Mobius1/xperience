@@ -32,8 +32,6 @@ XP Ranking System for FiveM
 * [Rank Actions](#rank-actions)
 * [QBCore Integration](#qbcore-integration)
 * [ESX Integration](#esx-integration)
-  - [Client](#client)
-  - [Server](#server)
 * [Admin Commands](#admin-commands)
 * [Themes](#themes)
 * [Custom Themes](#custom-themes)
