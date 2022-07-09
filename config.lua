@@ -25,3 +25,5 @@ Config.Themes = {
 
 Config.UseQBCore    = false
 Config.UseESX       = false
+
+Config.ESXIdentifierColumn = 'identifier'

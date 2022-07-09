@@ -332,7 +332,7 @@ end
 --                 EVENT HANDLERS                 --
 ----------------------------------------------------
 
-AddEventHandler(event, function() Wait(200) TriggerServerEvent('xperience:server:load') end)
+RegisterNetEvent(event, function() Wait(1000) TriggerServerEvent('xperience:server:load') end)
 
 RegisterNetEvent('xperience:client:init', function(...) Xperience:Init(...) end)
 RegisterNetEvent('xperience:client:addXP', function(...) Xperience:AddXP(...) end)

@@ -59,7 +59,13 @@ function Xperience:Load(src)
             local license = self:GetPlayer(src)
             
             if Config.UseESX then
-                MySQL.Async.fetchAll('SELECT * FROM users WHERE license = ?', { license }, function(res)
+                local statement = 'SELECT * FROM users WHERE license = ?'
+
+                if Config.ESXIdentifierColumn == 'identifier' then
+                    statement = 'SELECT * FROM users WHERE identifier = ?'
+                end
+                
+                MySQL.Async.fetchAll(statement, { license }, function(res)
                     if res[1] then
                         result = {}
                         result.xp = tonumber(res[1].xp)
@@ -198,11 +204,11 @@ end
 function Xperience:GetPlayer(src)
     for _, id in pairs(GetPlayerIdentifiers(src)) do
         if string.sub(id, 1, string.len('license:')) == 'license:' then
-            if Config.UseESX then
+            if Config.UseESX and Config.ESXIdentifierColumn == 'license' then
                 return id
-            else
-                return string.sub(id, 9, string.len(id))
             end
+
+            return string.sub(id, 9, string.len(id))
         end
     end 
     
