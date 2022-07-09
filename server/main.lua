@@ -59,13 +59,13 @@ function Xperience:Load(src)
             local license = self:GetPlayer(src)
             
             if Config.UseESX then
-                local statement = 'SELECT * FROM users WHERE license = ?'
+                local statement = 'SELECT * FROM users WHERE license = @license'
 
                 if Config.ESXIdentifierColumn == 'identifier' then
-                    statement = 'SELECT * FROM users WHERE identifier = ?'
+                    statement = 'SELECT * FROM users WHERE identifier = @license'
                 end
                 
-                MySQL.Async.fetchAll(statement, { license }, function(res)
+                MySQL.Async.fetchAll(statement, { ['@license'] = license }, function(res)
                     if res[1] then
                         result = {}
                         result.xp = tonumber(res[1].xp)
