@@ -289,8 +289,10 @@ CreateThread(function() Xperience:Init() end)
 --                 EVENT HANDLERS                 --
 ----------------------------------------------------
 
-RegisterNetEvent('xperience:server:load', function() Xperience:Load(source) end)
-RegisterNetEvent('xperience:server:save', function(xp, rank) Xperience:Save(source, xp, rank) end)
+RegisterNetEvent('xperience:server:load')
+AddEventHandler('xperience:server:load', function() Xperience:Load(source) end)
+RegisterNetEvent('xperience:server:save')
+AddEventHandler('xperience:server:save',function(xp, rank) Xperience:Save(source, xp, rank) end)
 
 
 ----------------------------------------------------
