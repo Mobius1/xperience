@@ -7,6 +7,9 @@ elseif Config.UseQBCore then
     event = 'QBCore:Client:OnPlayerLoaded'
 end
 
+
+RegisterKeyMapping('+xperience', 'Show Rank Bar', 'keyboard', Config.UIKey)
+
 function Xperience:Init(data)
     self.CurrentXP      = tonumber(data.xp)
     self.CurrentRank    = tonumber(data.rank)
@@ -19,7 +22,6 @@ function Xperience:Init(data)
         end
     end)
     RegisterCommand('-xperience', function() end)
-    RegisterKeyMapping('+xperience', 'Show Rank Bar', 'keyboard', Config.UIKey)
 
     TriggerEvent('chat:addSuggestion', '/addXP', 'Give XP to player', {
         { name = "playerId",    help = 'The player\'s ID' },
