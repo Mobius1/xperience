@@ -59,13 +59,13 @@ function Xperience:Load(src)
             local license = self:GetPlayer(src)
             
             if Config.UseESX then
-                local statement = 'SELECT * FROM users WHERE license = ?'
+                local statement = 'SELECT * FROM users WHERE license = @license'
 
                 if Config.ESXIdentifierColumn == 'identifier' then
-                    statement = 'SELECT * FROM users WHERE identifier = ?'
+                    statement = 'SELECT * FROM users WHERE identifier = @license'
                 end
                 
-                MySQL.Async.fetchAll(statement, { license }, function(res)
+                MySQL.Async.fetchAll(statement, { ['@license'] = license }, function(res)
                     if res[1] then
                         result = {}
                         result.xp = tonumber(res[1].xp)
@@ -79,7 +79,7 @@ function Xperience:Load(src)
                     end
                 end)
             else
-                MySQL.Async.fetchAll('SELECT * FROM user_experience WHERE identifier = ?', { license }, function(res)
+                MySQL.Async.fetchAll('SELECT * FROM user_experience WHERE identifier = @license', { ['@license'] = license }, function(res)
                     if res[1] then
                         result = {}
                         result.xp = tonumber(res[1].xp)
@@ -116,13 +116,13 @@ function Xperience:Save(src, xp, rank)
             Player.set("xp", tonumber(xp))
             Player.set("rank", tonumber(rank))
 
-            MySQL.Async.execute('UPDATE users SET xp = ?, rank = ? WHERE identifier = ?', { xp, rank, license }, function(affectedRows)
+            MySQL.Async.execute('UPDATE users SET xp = @xp, rank = @rank WHERE identifier = @identifier', { ['@xp'] = xp, ['@rank'] = rank, ['@identifier'] = license }, function(affectedRows)
                 if not affectedRows then
                     printError('There was a problem saving the user\'s data!')
                 end
             end)
         else
-            MySQL.Async.execute('UPDATE user_experience SET xp = ?, rank = ? WHERE identifier = ?', { xp, rank, license }, function(affectedRows)
+            MySQL.Async.execute('UPDATE user_experience SET xp = @xp, rank = @rank WHERE identifier = @identifier', { ['@xp'] = xp, ['@rank'] = rank, ['@identifier'] = license }, function(affectedRows)
                 if not affectedRows then
                     printError('There was a problem saving the user\'s data!')
                 end
@@ -150,7 +150,7 @@ function Xperience:GetPlayerXP(playerId)
         end
     else
         local license = self:GetPlayer(playerId)
-        local xp = MySQL.Sync.fetchScalar('SELECT xp FROM user_experience WHERE identifier = ?', { license })
+        local xp = MySQL.Sync.fetchScalar('SELECT xp FROM user_experience WHERE identifier = @license', {['@license'] = license })
 
         return tonumber(xp)
     end
@@ -173,7 +173,7 @@ function Xperience:GetPlayerRank(playerId)
         end
     else
         local license = self:GetPlayer(playerId)
-        local rank = MySQL.Sync.fetchScalar('SELECT rank FROM user_experience WHERE identifier = ?', { license })
+        local rank = MySQL.Sync.fetchScalar('SELECT rank FROM user_experience WHERE identifier = @license', { ['@license'] = license })
     
         return tonumber(rank)
     end
@@ -289,8 +289,10 @@ CreateThread(function() Xperience:Init() end)
 --                 EVENT HANDLERS                 --
 ----------------------------------------------------
 
-RegisterNetEvent('xperience:server:load', function() Xperience:Load(source) end)
-RegisterNetEvent('xperience:server:save', function(xp, rank) Xperience:Save(source, xp, rank) end)
+RegisterNetEvent('xperience:server:load')
+AddEventHandler('xperience:server:load', function() Xperience:Load(source) end)
+RegisterNetEvent('xperience:server:save')
+AddEventHandler('xperience:server:save',function(xp, rank) Xperience:Save(source, xp, rank) end)
 
 
 ----------------------------------------------------
