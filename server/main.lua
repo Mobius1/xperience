@@ -116,7 +116,13 @@ function Xperience:Save(src, xp, rank)
             Player.set("xp", tonumber(xp))
             Player.set("rank", tonumber(rank))
 
-            MySQL.Async.execute('UPDATE users SET xp = @xp, rank = @rank WHERE identifier = @identifier', { ['@xp'] = xp, ['@rank'] = rank, ['@identifier'] = license }, function(affectedRows)
+            local statement = 'UPDATE users SET xp = @xp, rank = @rank WHERE license = @license'
+
+            if Config.ESXIdentifierColumn == 'identifier' then
+                statement = 'UPDATE users SET xp = @xp, rank = @rank WHERE identifier = @license'
+            end
+
+            MySQL.Async.execute(statement, { ['@xp'] = xp, ['@rank'] = rank, ['@license'] = license }, function(affectedRows)
                 if not affectedRows then
                     printError('There was a problem saving the user\'s data!')
                 end
@@ -293,7 +299,6 @@ RegisterNetEvent('xperience:server:load')
 AddEventHandler('xperience:server:load', function() Xperience:Load(source) end)
 RegisterNetEvent('xperience:server:save')
 AddEventHandler('xperience:server:save',function(xp, rank) Xperience:Save(source, xp, rank) end)
-
 
 ----------------------------------------------------
 --                    EXPORTS                     --
